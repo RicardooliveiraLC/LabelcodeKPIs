@@ -1,0 +1,235 @@
+{
+  "meta": {
+    "title": "KPIs SGI 2026 — Label Code",
+    "updated": "2026-06-19",
+    "global_target": 0.80,
+    "spreadsheet_id": "16w6VYi0RFFYgDKtZdk92NPLg_sqp6kKVoF02doOiCVs"
+  },
+  "monthly_results": {
+    "jan": 0.7143,
+    "fev": 0.5714,
+    "mar": 0.6667,
+    "abr": 0.7692,
+    "mai": null,
+    "jun": null,
+    "jul": null,
+    "ago": null,
+    "set": null,
+    "out": null,
+    "nov": null,
+    "dez": null
+  },
+  "indicators": [
+    {
+      "id": "satisfacao_clientes",
+      "name": "Satisfação dos clientes",
+      "category": "Clientes",
+      "type": "meta",
+      "target": 0.85,
+      "better": "higher",
+      "format": "percent",
+      "values": { "jan": null, "fev": null, "mar": null, "abr": null, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    },
+    {
+      "id": "taxa_conversao_orcamentos",
+      "name": "Taxa de conversão de orçamentos em pedidos",
+      "category": "Clientes",
+      "type": "meta",
+      "target": 0.80,
+      "better": "higher",
+      "format": "percent",
+      "values": { "jan": null, "fev": null, "mar": null, "abr": null, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    },
+    {
+      "id": "conversao_amostras",
+      "name": "Conversão de amostras em pedido",
+      "category": "Clientes",
+      "type": "meta",
+      "target": 0.60,
+      "better": "higher",
+      "format": "percent",
+      "values": { "jan": null, "fev": null, "mar": null, "abr": null, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    },
+    {
+      "id": "assertividade_amostras",
+      "name": "Assertividade de amostras",
+      "category": "Clientes",
+      "type": "meta",
+      "target": 0.85,
+      "better": "higher",
+      "format": "percent",
+      "values": { "jan": null, "fev": null, "mar": null, "abr": null, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    },
+    {
+      "id": "giro_estoque_mp",
+      "name": "Giro de estoque (matéria prima)",
+      "category": "Produção",
+      "type": "meta",
+      "target": 0.90,
+      "better": "higher",
+      "format": "percent",
+      "values": { "jan": 0.760, "fev": 1.070, "mar": 0.780, "abr": 1.090, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    },
+    {
+      "id": "produtos_acabados_parado",
+      "name": "Produtos acabados parado em estoque",
+      "category": "Produção",
+      "type": "meta",
+      "target": 0.90,
+      "better": "higher",
+      "format": "percent",
+      "values": { "jan": 0.840, "fev": 0.830, "mar": 0.970, "abr": 0.880, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    },
+    {
+      "id": "perdas_flexo",
+      "name": "Perdas – Flexo",
+      "category": "Produção",
+      "type": "limite",
+      "target": 0.030,
+      "better": "lower",
+      "format": "percent",
+      "values": { "jan": -0.213, "fev": 0.062, "mar": -0.008, "abr": 0.024, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    },
+    {
+      "id": "perdas_offset",
+      "name": "Perdas – Offset",
+      "category": "Produção",
+      "type": "limite",
+      "target": 0.030,
+      "better": "lower",
+      "format": "percent",
+      "values": { "jan": -0.023, "fev": 0.049, "mar": -0.002, "abr": 0.001, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    },
+    {
+      "id": "perdas_digital",
+      "name": "Perdas – Digital",
+      "category": "Produção",
+      "type": "limite",
+      "target": 0.100,
+      "better": "lower",
+      "format": "percent",
+      "values": { "jan": -0.078, "fev": -0.010, "mar": 0.002, "abr": -0.075, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    },
+    {
+      "id": "tempo_produtivo",
+      "name": "% Tempo produtivo",
+      "category": "Produção",
+      "type": "meta",
+      "target": 0.500,
+      "better": "higher",
+      "format": "percent",
+      "values": { "jan": 0.510, "fev": 0.470, "mar": 0.536, "abr": 0.509, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    },
+    {
+      "id": "pontualidade_entrega",
+      "name": "Pontualidade na entrega interna",
+      "category": "Produção",
+      "type": "meta",
+      "target": 0.700,
+      "better": "higher",
+      "format": "percent",
+      "values": { "jan": 0.180, "fev": 0.206, "mar": 0.366, "abr": null, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    },
+    {
+      "id": "igf",
+      "name": "IGF – Índice Geral de Fornecedores",
+      "category": "Qualidade",
+      "type": "meta",
+      "target": 0.900,
+      "better": "higher",
+      "format": "percent",
+      "values": { "jan": 0.966, "fev": 0.991, "mar": 0.990, "abr": 0.981, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    },
+    {
+      "id": "reclamacao_clientes",
+      "name": "Reclamação de clientes (produtos)",
+      "category": "Qualidade",
+      "type": "limite",
+      "target": 0.005,
+      "better": "lower",
+      "format": "percent",
+      "values": { "jan": 0.003, "fev": 0.003, "mar": 0.017, "abr": 0.040, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    },
+    {
+      "id": "nc_internas",
+      "name": "Não Conformidades Internas (produtos)",
+      "category": "Qualidade",
+      "type": "limite",
+      "target": 0.200,
+      "better": "lower",
+      "format": "percent",
+      "values": { "jan": 0.000, "fev": 0.000, "mar": 0.200, "abr": 0.000, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    },
+    {
+      "id": "pesquisa_clima",
+      "name": "Pesquisa de clima organizacional",
+      "category": "Pessoas",
+      "type": "meta",
+      "target": 7.000,
+      "better": "higher",
+      "format": "decimal1",
+      "values": { "jan": null, "fev": null, "mar": null, "abr": null, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    },
+    {
+      "id": "avaliacoes_desempenho",
+      "name": "Avaliações de desempenho",
+      "category": "Pessoas",
+      "type": "meta",
+      "target": 7.000,
+      "better": "higher",
+      "format": "decimal1",
+      "values": { "jan": null, "fev": null, "mar": null, "abr": null, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    },
+    {
+      "id": "consumo_energia",
+      "name": "Consumo energético (kWh/m²)",
+      "category": "Ambiental",
+      "type": "limite",
+      "target": 0.200,
+      "better": "lower",
+      "format": "decimal3",
+      "values": { "jan": 0.170, "fev": 0.147, "mar": 0.200, "abr": 0.129, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    },
+    {
+      "id": "consumo_agua",
+      "name": "Consumo de água (L/dia/colaborador)",
+      "category": "Ambiental",
+      "type": "limite",
+      "target": 58.0,
+      "better": "lower",
+      "format": "decimal1",
+      "notes": "Medição trimestral",
+      "values": { "jan": null, "fev": null, "mar": 40.1, "abr": null, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    },
+    {
+      "id": "descarte_aparas",
+      "name": "Descarte aparas de papel / total utilizado",
+      "category": "Ambiental",
+      "type": "limite",
+      "target": 0.290,
+      "better": "lower",
+      "format": "percent",
+      "values": { "jan": 0.110, "fev": 0.100, "mar": 0.330, "abr": 0.120, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    },
+    {
+      "id": "descarte_nao_reciclado",
+      "name": "Descarte não reciclado / total utilizado",
+      "category": "Ambiental",
+      "type": "limite",
+      "target": 0.120,
+      "better": "lower",
+      "format": "percent",
+      "values": { "jan": 0.147, "fev": 0.163, "mar": 0.181, "abr": 0.141, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    },
+    {
+      "id": "emissao_gee",
+      "name": "Emissão de GEE por fonte de energia / m²",
+      "category": "Ambiental",
+      "type": "limite",
+      "target": 0.030,
+      "better": "lower",
+      "format": "decimal3",
+      "values": { "jan": 0.016, "fev": 0.014, "mar": 0.019, "abr": 0.012, "mai": null, "jun": null, "jul": null, "ago": null, "set": null, "out": null, "nov": null, "dez": null }
+    }
+  ]
+}

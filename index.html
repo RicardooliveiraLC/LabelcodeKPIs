@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KPIs SGI 2026 — Label Code</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F1F5F9;--card:#fff;--border:#E2E8F0;
+  --t1:#1E293B;--t2:#64748B;--t3:#94A3B8;
+  --green:#16A34A;--green-bg:#F0FDF4;--green-b:#BBF7D0;
+  --red:#DC2626;--red-bg:#FEF2F2;--red-b:#FECACA;
+  --amber:#D97706;--amber-bg:#FFFBEB;--amber-b:#FDE68A;
+  --blue:#2563EB;--blue-bg:#EFF6FF;--blue-b:#BFDBFE;
+  --r:12px;--rs:8px
+}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--t1);font-size:14px;line-height:1.5}
+
+/* ── Header */
+.hdr{background:var(--card);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.hdr-brand{display:flex;align-items:center;gap:12px}
+.hdr-logo{width:36px;height:36px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;letter-spacing:.5px}
+.hdr-title{font-size:15px;font-weight:600;color:var(--t1)}
+.hdr-sub{font-size:12px;color:var(--t2)}
+.hdr-right{text-align:right;font-size:12px;color:var(--t2);line-height:1.6}
+
+/* ── Main layout */
+.main{max-width:1400px;margin:0 auto;padding:28px 24px 64px}
+
+/* ── Cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r)}
+.p20{padding:20px}
+.section-label{font-size:11px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+
+/* ── Monthly results grid */
+.months-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:10px}
+.trend-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:24px}
+.m-card{padding:18px 12px;text-align:center}
+.m-label{font-size:10px;color:var(--t2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.m-value{font-size:26px;font-weight:700;line-height:1;margin-bottom:4px}
+.m-meta{font-size:11px;color:var(--t3)}
+.m-empty{opacity:.45}
+
+/* ── Charts */
+.charts-row{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin-bottom:24px}
+.chart-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.chart-sub{font-size:11px;color:var(--t2);margin-bottom:16px}
+.chart-wrap{position:relative;width:100%}
+
+/* ── Alerts */
+.alerts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:24px}
+.alert{display:flex;align-items:flex-start;gap:12px;padding:16px;border-radius:var(--r);border:1px solid}
+.alert-red{background:var(--red-bg);border-color:var(--red-b)}
+.alert-amber{background:var(--amber-bg);border-color:var(--amber-b)}
+.alert-green{background:var(--green-bg);border-color:var(--green-b)}
+.alert-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.alert-ico-red{background:#FEE2E2;color:var(--red)}
+.alert-ico-amber{background:#FEF3C7;color:var(--amber)}
+.alert-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.alert-body{font-size:12px}
+
+/* ── Table */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{padding:10px 14px;text-align:left;font-size:10px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);background:#F8FAFC;white-space:nowrap}
+th.c{text-align:center}
+td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#F8FAFC}
+.sec-row td{background:#F1F5F9!important;color:var(--t2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:8px 14px}
+.td-c{text-align:center}
+.val{font-size:10px;color:var(--t3);margin-top:1px}
+
+/* ── Status dot */
+.dot{width:11px;height:11px;border-radius:3px;display:inline-block}
+.dot-hit{background:var(--green)}
+.dot-miss{background:var(--red)}
+.dot-pending{background:#E2E8F0;border:1px solid #CBD5E1}
+
+/* ── Legend */
+.legend{display:flex;gap:14px;align-items:center;font-size:11px;color:var(--t2)}
+.li{display:flex;align-items:center;gap:5px}
+
+/* ── Pill */
+.pill{font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px}
+.pill-red{background:#FEE2E2;color:#991B1B}
+.pill-amber{background:#FEF3C7;color:#92400E}
+.pill-green{background:#DCFCE7;color:#166534}
+
+/* ── Progress bar */
+.prog-wrap{height:6px;background:#E2E8F0;border-radius:3px;overflow:hidden;margin-top:6px}
+.prog-bar{height:100%;border-radius:3px;transition:width .3s}
+
+/* ── Footer */
+.footer{text-align:center;color:var(--t3);font-size:11px;margin-top:40px;padding-bottom:24px}
+.footer a{color:var(--blue);text-decoration:none}
+
+/* ── Loading */
+#loading{text-align:center;padding:80px;color:var(--t2);font-size:14px}
+
+/* ── Responsive */
+@media(max-width:1100px){.months-grid,.trend-grid{grid-template-columns:repeat(3,1fr)}.charts-row{grid-template-columns:1fr 1fr}}
+@media(max-width:750px){.months-grid,.trend-grid{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.main{padding:16px 12px 40px}.hdr{padding:0 16px}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-brand">
+    <div class="hdr-logo">LC</div>
+    <div>
+      <div class="hdr-title">Label Code</div>
+      <div class="hdr-sub">Sistema de Gestão Integrada · 2026</div>
+    </div>
+  </div>
+  <div class="hdr-right" id="hdrMeta">—</div>
+</header>
+
+<main class="main">
+  <div id="loading">⏳ Carregando dados do painel...</div>
+  <div id="app" style="display:none"></div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const MONTHS=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const MLABELS=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+function getStatus(ind,m){
+  const v=ind.values[m];
+  if(v===null||v===undefined)return'pending';
+  return ind.better==='higher'?v>=ind.target?'hit':'miss':v<=ind.target?'hit':'miss';
+}
+
+function fmtVal(v,format){
+  if(v===null||v===undefined)return null;
+  if(format==='percent')return(v*100).toFixed(1)+'%';
+  if(format==='decimal1')return v.toFixed(1);
+  if(format==='decimal3')return v.toFixed(3);
+  return String(v);
+}
+
+function fmtTarget(ind){
+  const dir=ind.better==='higher'?'≥':'≤';
+  if(ind.format==='percent')return`${dir} ${(ind.target*100).toFixed(ind.target<0.1?1:0)}%`;
+  if(ind.format==='decimal1')return`${dir} ${ind.target.toFixed(1)}`;
+  if(ind.format==='decimal3')return`${dir} ${ind.target.toFixed(3)}`;
+  return`${dir} ${ind.target}`;
+}
+
+function sgiColor(pct){
+  if(pct===null)return'var(--t3)';
+  if(pct>=.80)return'var(--green)';
+  if(pct>=.65)return'var(--amber)';
+  return'var(--red)';
+}
+
+function calcMonth(indicators,m){
+  let hits=0,total=0;
+  indicators.forEach(ind=>{
+    const v=ind.values[m];
+    if(v!==null&&v!==undefined){total++;if(getStatus(ind,m)==='hit')hits++;}
+  });
+  return total===0?null:{hits,total,pct:hits/total};
+}
+
+function dot(s){
+  const cls=s==='hit'?'dot-hit':s==='miss'?'dot-miss':'dot-pending';
+  const t=s==='hit'?'Atingido':s==='miss'?'Não atingido':'Aguardando dados';
+  return`<span class="dot ${cls}" title="${t}"></span>`;
+}
+
+async function loadData(){
+  try{
+    const r=await fetch('data.json?v='+Date.now());
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    return await r.json();
+  }catch(e){
+    console.warn('Usando dados embutidos:',e.message);
+    return window.__DATA__;
+  }
+}
+
+function render(data){
+  const monthly={};
+  MONTHS.forEach(m=>monthly[m]=calcMonth(data.indicators,m));
+  const withData=MONTHS.filter(m=>monthly[m]!==null);
+  const lastM=withData[withData.length-1]||null;
+
+  document.getElementById('hdrMeta').innerHTML=
+    `<div>Última atualização: <strong>${data.meta.updated}</strong></div>`+
+    `<div>Meta global SGI: <strong>${(data.meta.global_target*100).toFixed(0)}%</strong> &nbsp;·&nbsp; Jan–Dez/2026</div>`;
+
+  // Monthly cards
+  const cardsHTML=MONTHS.map((m,i)=>{
+    const r=monthly[m];
+    const color=sgiColor(r?r.pct:null);
+    const progW=r?Math.round(r.pct*100):0;
+    const progC=r?r.pct>=.8?'#16A34A':r.pct>=.65?'#D97706':'#DC2626':'#CBD5E1';
+    return`<div class="card m-card${r?'':' m-empty'}">
+      <div class="m-label">${MLABELS[i]}/26</div>
+      ${r
+        ?`<div class="m-value" style="color:${color}">${(r.pct*100).toFixed(1)}%</div>
+           <div class="m-meta">${r.hits} de ${r.total} metas</div>
+           <div class="prog-wrap"><div class="prog-bar" style="width:${progW}%;background:${progC}"></div></div>`
+        :`<div class="m-value" style="color:var(--t3);font-size:18px">—</div>
+           <div class="m-meta">sem dados</div>
+           <div class="prog-wrap"></div>`
+      }
+    </div>`;
+  }).join('');
+
+  // Trend card
+  const prev=withData.length>=2?monthly[withData[withData.length-2]]:null;
+  const curr=lastM?monthly[lastM]:null;
+  let trendIcon='—',trendLabel='—',trendColor='var(--t3)';
+  if(curr&&prev){
+    if(curr.pct>prev.pct){trendIcon='↑';trendLabel='Em alta';trendColor='var(--green)';}
+    else if(curr.pct<prev.pct){trendIcon='↓';trendLabel='Em queda';trendColor='var(--red)';}
+    else{trendIcon='→';trendLabel='Estável';trendColor='var(--amber)';}
+  }
+
+  // Alerts
+  const misses=lastM?data.indicators.filter(ind=>getStatus(ind,lastM)==='miss'):[];
+  const alertsHTML=misses.length===0
+    ?`<div class="card p20" style="text-align:center;color:var(--t2);grid-column:1/-1">✅ Nenhum indicador fora da meta no último período monitorado.</div>`
+    :misses.map(ind=>{
+      const v=ind.values[lastM];
+      const display=fmtVal(v,ind.format)||'—';
+      const tgt=fmtTarget(ind);
+      return`<div class="alert alert-red">
+        <div class="alert-ico alert-ico-red">⚠</div>
+        <div>
+          <div class="alert-title" style="color:#991B1B">${ind.name}</div>
+          <div class="alert-body" style="color:#B91C1C">${MLABELS[MONTHS.indexOf(lastM)]}: <strong>${display}</strong> · meta ${tgt}</div>
+        </div>
+      </div>`;
+    }).join('');
+
+  // SGI Chart data
+  const sgiVals=MONTHS.map(m=>monthly[m]!==null?+(monthly[m].pct*100).toFixed(2):null);
+
+  // Find specific indicators
+  const pontInd=data.indicators.find(i=>i.id==='pontualidade_entrega');
+  const reclInd=data.indicators.find(i=>i.id==='reclamacao_clientes');
+  const pontVals=MONTHS.map(m=>pontInd.values[m]!==null&&pontInd.values[m]!==undefined?+(pontInd.values[m]*100).toFixed(1):null);
+  const reclVals=MONTHS.map(m=>reclInd.values[m]!==null&&reclInd.values[m]!==undefined?+(reclInd.values[m]*100).toFixed(2):null);
+
+  // Category stats for last month
+  const cats=[...new Set(data.indicators.map(i=>i.category))];
+  const catStats=lastM?cats.map(cat=>{
+    const inds=data.indicators.filter(i=>i.category===cat);
+    const monitored=inds.filter(i=>i.values[lastM]!==null&&i.values[lastM]!==undefined);
+    const hits=monitored.filter(i=>getStatus(i,lastM)==='hit');
+    return{cat,hits:hits.length,total:monitored.length,pct:monitored.length?hits.length/monitored.length:null};
+  }):[];
+
+  const catBarsHTML=catStats.map(s=>{
+    const pct=s.pct!==null?Math.round(s.pct*100):null;
+    const color=s.pct===null?'#CBD5E1':s.pct>=.8?'#16A34A':s.pct>=.6?'#D97706':'#DC2626';
+    return`<div style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+        <span style="font-size:13px;font-weight:500">${s.cat}</span>
+        <span style="font-size:13px;font-weight:600;color:${color}">${pct!==null?pct+'%':'—'}</span>
+      </div>
+      <div class="prog-wrap" style="height:8px">
+        <div class="prog-bar" style="width:${pct||0}%;background:${color}"></div>
+      </div>
+      <div style="font-size:11px;color:var(--t2);margin-top:3px">${s.total>0?s.hits+'/'+s.total+' indicadores':'sem dados'}</div>
+    </div>`;
+  }).join('');
+
+  const app=document.getElementById('app');
+  app.innerHTML=`
+
+    <!-- Monthly results -->
+    <div class="section-label">Resultado SGI — ${MLABELS[0]} a ${MLABELS[11]} / 2026</div>
+    <div class="months-grid">${cardsHTML}</div>
+
+    <!-- Charts + category -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 200px;gap:12px;margin-bottom:24px">
+
+      <div class="card p20">
+        <div class="chart-title">Resultado SGI geral</div>
+        <div class="chart-sub">% indicadores que atingiram a meta · meta global 80%</div>
+        <div class="chart-wrap" style="height:180px"><canvas id="sgiChart" role="img" aria-label="Evolução SGI mensal 2026"></canvas></div>
+      </div>
+
+      <div class="card p20">
+        <div class="chart-title">Pontualidade na entrega</div>
+        <div class="chart-sub">meta ≥ 70%</div>
+        <div class="chart-wrap" style="height:180px"><canvas id="pontChart" role="img" aria-label="Pontualidade mensal 2026"></canvas></div>
+      </div>
+
+      <div class="card p20">
+        <div class="chart-title">Reclamação de clientes</div>
+        <div class="chart-sub">limite ≤ 0,5%</div>
+        <div class="chart-wrap" style="height:180px"><canvas id="reclChart" role="img" aria-label="Reclamações mensais 2026"></canvas></div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="card p20" style="text-align:center;flex:0">
+          <div class="m-label">Tendência</div>
+          <div style="font-size:32px;font-weight:700;color:${trendColor}">${trendIcon}</div>
+          <div style="font-size:12px;font-weight:500;color:${trendColor}">${trendLabel}</div>
+          ${curr?`<div style="font-size:11px;color:var(--t2);margin-top:4px">${(curr.pct*100).toFixed(1)}% em ${MLABELS[MONTHS.indexOf(lastM)]}</div>`:''}
+        </div>
+        <div class="card p20" style="flex:1">
+          <div class="section-label" style="margin-bottom:16px">Por categoria<br><span style="font-weight:400">${lastM?MLABELS[MONTHS.indexOf(lastM)]+'/26':'—'}</span></div>
+          ${catBarsHTML||'<div style="color:var(--t2);font-size:12px">sem dados</div>'}
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Alerts -->
+    <div class="section-label">Indicadores fora da meta · ${lastM?MLABELS[MONTHS.indexOf(lastM)]+'/26':'último período'}</div>
+    <div class="alerts-grid">${alertsHTML}</div>
+
+    <!-- Full table -->
+    <div class="section-label" style="display:flex;justify-content:space-between;align-items:center">
+      <span>Status detalhado — todos os 21 indicadores</span>
+      <div class="legend">
+        <div class="li"><span class="dot dot-hit"></span>Atingido</div>
+        <div class="li"><span class="dot dot-miss"></span>Não atingido</div>
+        <div class="li"><span class="dot dot-pending"></span>Aguardando</div>
+      </div>
+    </div>
+    <div class="card" style="overflow:hidden">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="min-width:220px">Indicador</th>
+              <th>Tipo</th>
+              <th>Meta</th>
+              ${MLABELS.map(l=>`<th class="c">${l}</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody id="kpiBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="footer">
+      Label Code · Painel de KPIs SGI 2026 · Atualizado em ${data.meta.updated} ·
+      <a href="https://github.com/dashboard-sgi-labelcode" target="_blank">Ver código no GitHub</a>
+    </div>
+  `;
+
+  // Populate table
+  const tbody=document.getElementById('kpiBody');
+  let lastCat=null;
+  data.indicators.forEach(ind=>{
+    if(ind.category!==lastCat){
+      lastCat=ind.category;
+      const tr=document.createElement('tr');
+      tr.className='sec-row';
+      tr.innerHTML=`<td colspan="${15}">${ind.category}</td>`;
+      tbody.appendChild(tr);
+    }
+    const tr=document.createElement('tr');
+    const cells=MONTHS.map(m=>{
+      const s=getStatus(ind,m);
+      const v=ind.values[m];
+      const display=v!==null&&v!==undefined?fmtVal(v,ind.format):'';
+      return`<td class="td-c"><div style="display:flex;flex-direction:column;align-items:center;gap:1px">${dot(s)}${display?`<div class="val">${display}</div>`:''}</div></td>`;
+    }).join('');
+    tr.innerHTML=`
+      <td>${ind.name}</td>
+      <td><span class="pill ${ind.type==='meta'?'pill-green':'pill-amber'}">${ind.type==='meta'?'Meta':'Limite'}</span></td>
+      <td style="color:var(--t2);white-space:nowrap;font-size:12px">${fmtTarget(ind)}</td>
+      ${cells}`;
+    tbody.appendChild(tr);
+  });
+
+  // Charts
+  const G='#16A34A',R='#DC2626',A='#D97706',B='#2563EB',GR='#94A3B8';
+  const grid='#E2E8F0',tick='#94A3B8';
+  const base={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+    scales:{x:{ticks:{color:tick,font:{size:10}},grid:{display:false},border:{display:false}},
+            y:{ticks:{color:tick,font:{size:10}},grid:{color:grid},border:{display:false}}}};
+
+  new Chart(document.getElementById('sgiChart'),{
+    type:'line',
+    data:{labels:MLABELS,datasets:[
+      {data:sgiVals,borderColor:B,backgroundColor:'rgba(37,99,235,.07)',borderWidth:2.5,
+       pointRadius:sgiVals.map(v=>v!==null?4:0),pointBackgroundColor:sgiVals.map(v=>v===null?B:v>=80?G:v>=65?A:R),
+       fill:true,tension:.35,spanGaps:false},
+      {data:MONTHS.map(()=>80),borderColor:R,borderDash:[5,4],borderWidth:1.5,pointRadius:0,fill:false}
+    ]},
+    options:{...base,scales:{...base.scales,y:{...base.scales.y,min:0,max:100,ticks:{...base.scales.y.ticks,callback:v=>v+'%'}}}}
+  });
+
+  new Chart(document.getElementById('pontChart'),{
+    type:'bar',
+    data:{labels:MLABELS,datasets:[
+      {data:pontVals,backgroundColor:pontVals.map(v=>v===null?'#E2E8F0':v>=70?G:R),borderRadius:4,barThickness:14},
+      {type:'line',data:MONTHS.map(()=>70),borderColor:A,borderDash:[5,4],borderWidth:1.5,pointRadius:0,fill:false}
+    ]},
+    options:{...base,scales:{...base.scales,y:{...base.scales.y,min:0,max:100,ticks:{...base.scales.y.ticks,callback:v=>v+'%'}}}}
+  });
+
+  new Chart(document.getElementById('reclChart'),{
+    type:'bar',
+    data:{labels:MLABELS,datasets:[
+      {data:reclVals,backgroundColor:reclVals.map(v=>v===null?'#E2E8F0':v<=.5?G:R),borderRadius:4,barThickness:14},
+      {type:'line',data:MONTHS.map(()=>0.5),borderColor:A,borderDash:[5,4],borderWidth:1.5,pointRadius:0,fill:false}
+    ]},
+    options:{...base,scales:{...base.scales,y:{...base.scales.y,min:0,ticks:{...base.scales.y.ticks,callback:v=>v+'%'}}}}
+  });
+
+  document.getElementById('loading').style.display='none';
+  app.style.display='block';
+}
+
+// ── Embedded fallback data ──────────────────────────────────────────────────
+window.__DATA__={"meta":{"title":"KPIs SGI 2026 — Label Code","updated":"2026-06-19","global_target":0.80},"monthly_results":{"jan":0.7143,"fev":0.5714,"mar":0.6667,"abr":0.7692,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null},"indicators":[{"id":"satisfacao_clientes","name":"Satisfação dos clientes","category":"Clientes","type":"meta","target":0.85,"better":"higher","format":"percent","values":{"jan":null,"fev":null,"mar":null,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"taxa_conversao_orcamentos","name":"Taxa de conversão de orçamentos em pedidos","category":"Clientes","type":"meta","target":0.80,"better":"higher","format":"percent","values":{"jan":null,"fev":null,"mar":null,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"conversao_amostras","name":"Conversão de amostras em pedido","category":"Clientes","type":"meta","target":0.60,"better":"higher","format":"percent","values":{"jan":null,"fev":null,"mar":null,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"assertividade_amostras","name":"Assertividade de amostras","category":"Clientes","type":"meta","target":0.85,"better":"higher","format":"percent","values":{"jan":null,"fev":null,"mar":null,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"giro_estoque_mp","name":"Giro de estoque (matéria prima)","category":"Produção","type":"meta","target":0.90,"better":"higher","format":"percent","values":{"jan":0.760,"fev":1.070,"mar":0.780,"abr":1.090,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"produtos_acabados_parado","name":"Produtos acabados parado em estoque","category":"Produção","type":"meta","target":0.90,"better":"higher","format":"percent","values":{"jan":0.840,"fev":0.830,"mar":0.970,"abr":0.880,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"perdas_flexo","name":"Perdas – Flexo","category":"Produção","type":"limite","target":0.030,"better":"lower","format":"percent","values":{"jan":-0.213,"fev":0.062,"mar":-0.008,"abr":0.024,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"perdas_offset","name":"Perdas – Offset","category":"Produção","type":"limite","target":0.030,"better":"lower","format":"percent","values":{"jan":-0.023,"fev":0.049,"mar":-0.002,"abr":0.001,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"perdas_digital","name":"Perdas – Digital","category":"Produção","type":"limite","target":0.100,"better":"lower","format":"percent","values":{"jan":-0.078,"fev":-0.010,"mar":0.002,"abr":-0.075,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"tempo_produtivo","name":"% Tempo produtivo","category":"Produção","type":"meta","target":0.500,"better":"higher","format":"percent","values":{"jan":0.510,"fev":0.470,"mar":0.536,"abr":0.509,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"pontualidade_entrega","name":"Pontualidade na entrega interna","category":"Produção","type":"meta","target":0.700,"better":"higher","format":"percent","values":{"jan":0.180,"fev":0.206,"mar":0.366,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"igf","name":"IGF – Índice Geral de Fornecedores","category":"Qualidade","type":"meta","target":0.900,"better":"higher","format":"percent","values":{"jan":0.966,"fev":0.991,"mar":0.990,"abr":0.981,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"reclamacao_clientes","name":"Reclamação de clientes (produtos)","category":"Qualidade","type":"limite","target":0.005,"better":"lower","format":"percent","values":{"jan":0.003,"fev":0.003,"mar":0.017,"abr":0.040,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"nc_internas","name":"Não Conformidades Internas (produtos)","category":"Qualidade","type":"limite","target":0.200,"better":"lower","format":"percent","values":{"jan":0.000,"fev":0.000,"mar":0.200,"abr":0.000,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"pesquisa_clima","name":"Pesquisa de clima organizacional","category":"Pessoas","type":"meta","target":7.000,"better":"higher","format":"decimal1","values":{"jan":null,"fev":null,"mar":null,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"avaliacoes_desempenho","name":"Avaliações de desempenho","category":"Pessoas","type":"meta","target":7.000,"better":"higher","format":"decimal1","values":{"jan":null,"fev":null,"mar":null,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"consumo_energia","name":"Consumo energético (kWh/m²)","category":"Ambiental","type":"limite","target":0.200,"better":"lower","format":"decimal3","values":{"jan":0.170,"fev":0.147,"mar":0.200,"abr":0.129,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"consumo_agua","name":"Consumo de água (L/dia/colaborador)","category":"Ambiental","type":"limite","target":58.0,"better":"lower","format":"decimal1","values":{"jan":null,"fev":null,"mar":40.1,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"descarte_aparas","name":"Descarte aparas de papel / total utilizado","category":"Ambiental","type":"limite","target":0.290,"better":"lower","format":"percent","values":{"jan":0.110,"fev":0.100,"mar":0.330,"abr":0.120,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"descarte_nao_reciclado","name":"Descarte não reciclado / total utilizado","category":"Ambiental","type":"limite","target":0.120,"better":"lower","format":"percent","values":{"jan":0.147,"fev":0.163,"mar":0.181,"abr":0.141,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"emissao_gee","name":"Emissão de GEE por fonte de energia / m²","category":"Ambiental","type":"limite","target":0.030,"better":"lower","format":"decimal3","values":{"jan":0.016,"fev":0.014,"mar":0.019,"abr":0.012,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}}]};
+// ──────────────────────────────────────────────────────────────────────────
+
+loadData().then(render).catch(e=>{
+  document.getElementById('loading').textContent='Erro ao carregar: '+e.message;
+});
+</script>
+</body>
+</html>
