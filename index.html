@@ -179,6 +179,7 @@ const MES_LABEL=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','No
 
 /* ── ESTADO GLOBAL ─────────────────────────────────────────── */
 let IND=[],SGI={},MESES=[],META_GLOBAL=0.80;
+let currentFilter='trimestre', currentCat='visao-geral';
 
 /* ── INIT ──────────────────────────────────────────────────── */
 async function init(){
@@ -282,35 +283,56 @@ function donut(id,val,color){
   charts.push(new Chart(el,{type:'doughnut',data:{datasets:[{data:[Math.max(0,val),Math.max(0,100-val)],backgroundColor:[color,'#eef1f6'],borderWidth:0,cutout:'74%'}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}}}}));
 }
 
+/* ── FILTRO DE PERÍODO ─────────────────────────────────────── */
+function fRange(){
+  const n=MESES.length;
+  if(currentFilter==='mes')       return [Math.max(0,n-1), n];
+  if(currentFilter==='trimestre') return [Math.max(0,n-3), n];
+  return [0, n];
+}
+function fMeses(){const[s,e]=fRange();return MESES.slice(s,e);}
+function fSerie(arr){const[s,e]=fRange();return arr.slice(s,e);}
+function fInd(ind){return{...ind,serie:fSerie(ind.serie)};}
+function setFilter(f){currentFilter=f;navigate(currentCat);}
+
 /* ── CATS ──────────────────────────────────────────────────── */
 const CATS={'visao-geral':{nome:'Visão Geral do SGI',desc:'Monitoramento de objetivos da qualidade e ambientais — ISO 9001 · ISO 14001 · FSC'},clientes:{nome:'Clientes & Comercial',desc:'Satisfação, conversão, assertividade, pontualidade e reclamações'},estoque:{nome:'Estoque',desc:'Giro de matéria-prima e de produtos acabados'},producao:{nome:'Produção',desc:'Tempo produtivo, perdas por processo (Flexo · Offset · Digital) e não conformidades'},fornecedores:{nome:'Fornecedores',desc:'Índice geral de desempenho de fornecedores (IGF)'},pessoas:{nome:'Pessoas (RH)',desc:'Clima organizacional e avaliações de desempenho'},ambiente:{nome:'Meio Ambiente',desc:'Consumo de energia e água, descarte de resíduos e emissões de GEE'},resultado:{nome:'Resultado SGI',desc:'Atendimento consolidado aos objetivos do sistema de gestão'}};
-function head(cat){const c=CATS[cat];return`<div class="page-head"><div><h1>${c.nome}</h1><p>${c.desc}</p></div><div class="seg"><button>Mês</button><button class="on">Trimestre</button><button>Ano</button></div></div>`;}
-function sub(){return`${MESES[0]} a ${MESES[MESES.length-1]} / 2026`;}
+function head(cat){
+  const c=CATS[cat];
+  const btns=[['mes','Mês'],['trimestre','Trimestre'],['ano','Ano']].map(([f,l])=>`<button onclick="setFilter('${f}')" class="${f===currentFilter?'on':''}">${l}</button>`).join('');
+  return`<div class="page-head"><div><h1>${c.nome}</h1><p>${c.desc}</p></div><div class="seg">${btns}</div></div>`;
+}
+function sub(){const m=fMeses();return m.length===1?m[0]+' / 2026':`${m[0]} a ${m[m.length-1]} / 2026`;}
 
 /* ── VIEW CATEGORIA ────────────────────────────────────────── */
 function viewCategory(cat){
   const inds=IND.filter(i=>i.cat===cat);
-  const plot=inds.filter(i=>i.serie.filter(x=>x!=null).length>=2);
+  const finds=inds.map(fInd);
+  const plot=finds.filter(i=>i.serie.filter(x=>x!=null).length>=1);
   const chartBlock=plot.length?`<div class="legend">${legendFor(plot)}</div><div class="chart-wrap"><canvas id="catChart"></canvas></div>`:`<div class="empty">Sem série mensal monitorada no período.</div>`;
-  return`${head(cat)}<section class="kpis">${inds.map((i,k)=>kpiCard(i,k)).join('')}</section>
+  return`${head(cat)}<section class="kpis">${finds.map((i,k)=>kpiCard(i,k)).join('')}</section>
   <div class="panel"><div class="panel-head"><div><h3>Evolução no Período</h3><div class="sub">Valores mensais — ${sub()}</div></div></div>${chartBlock}</div>`;
 }
 
 /* ── VIEW RESULTADO ────────────────────────────────────────── */
 function viewResultado(){
-  const liIdx=SGI.serie.reduce((bi,v,i)=>v!=null?i:bi,-1);
-  const lastSGI=liIdx>=0?SGI.serie[liIdx]:null;
-  const lastMes=liIdx>=0?MESES[liIdx]:'—';
-  const vals=SGI.serie.filter(v=>v!=null);
+  const fSGI=fSerie(SGI.serie);
+  const fMes=fMeses();
+  const liIdx=fSGI.reduce((bi,v,i)=>v!=null?i:bi,-1);
+  const lastSGI=liIdx>=0?fSGI[liIdx]:null;
+  const lastMes=liIdx>=0?fMes[liIdx]:'—';
+  const vals=fSGI.filter(v=>v!=null);
   const media=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;
-  const bestIdx=SGI.serie.reduce((bi,v,i)=>v!=null&&(bi<0||v>SGI.serie[bi])?i:bi,-1);
-  const bestMes=bestIdx>=0?MESES[bestIdx]:'—';
-  const bestVal=bestIdx>=0?SGI.serie[bestIdx]:null;
-  const monitored=IND.filter(i=>liIdx>=0&&i.serie[liIdx]!=null);
-  const atingidos=monitored.filter(i=>{const v=i.serie[liIdx];return i.better==='lower'?v<=i.meta:v>=i.meta;});
+  const bestIdx=fSGI.reduce((bi,v,i)=>v!=null&&(bi<0||v>fSGI[bi])?i:bi,-1);
+  const bestMes=bestIdx>=0?fMes[bestIdx]:'—';
+  const bestVal=bestIdx>=0?fSGI[bestIdx]:null;
+  // indicadores atingidos: usa o valor no último mês do filtro que tenha dado
+  const [fs]=fRange(); const absLiIdx=fs+liIdx;
+  const monitored=IND.filter(i=>absLiIdx>=0&&i.serie[absLiIdx]!=null);
+  const atingidos=monitored.filter(i=>{const v=i.serie[absLiIdx];return i.better==='lower'?v<=i.meta:v>=i.meta;});
   const atingPct=monitored.length?Math.round(atingidos.length/monitored.length*100):0;
   const pctMeta=lastSGI!=null?Math.min(100,Math.round(lastSGI/META_GLOBAL*100)):0;
-  const prev=liIdx>0?SGI.serie.slice(0,liIdx).filter(v=>v!=null):[];
+  const prev=liIdx>0?fSGI.slice(0,liIdx).filter(v=>v!=null):[];
   const prevVal=prev.length?prev[prev.length-1]:null;
   const tend=lastSGI==null?'—':prevVal==null?'↔':lastSGI>prevVal?'↑':lastSGI<prevVal?'↓':'→';
   const f=v=>v!=null?br(v*100,1)+'<small>%</small>':'—';
@@ -322,26 +344,29 @@ function viewResultado(){
     <div class="kpi" style="background:linear-gradient(135deg,#ffaf45,#ff8a4c)"><div class="lbl">Melhor Mês</div><div class="val">${bestMes}</div><div class="bar"><i style="width:${bestVal!=null?Math.round(bestVal*100):0}%"></i></div><div class="foot"><span>${f(bestVal)}</span><span class="badge">Tendência ${tend}</span></div></div>
   </section>
   <section class="row r2">
-    <div class="panel"><div class="panel-head"><div><h3>Atendimento aos Objetivos</h3><div class="sub">Resultado SGI vs. meta de ${br(META_GLOBAL*100,0)}%</div></div></div><div class="chart-wrap"><canvas id="sgiLine"></canvas></div></div>
+    <div class="panel"><div class="panel-head"><div><h3>Atendimento aos Objetivos</h3><div class="sub">Resultado SGI vs. meta de ${br(META_GLOBAL*100,0)}% — ${sub()}</div></div></div><div class="chart-wrap"><canvas id="sgiLine"></canvas></div></div>
     <div class="panel"><div class="panel-head"><div><h3>Resultado por Mês</h3><div class="sub">% de atendimento — ${sub()}</div></div></div><div class="chart-wrap"><canvas id="sgiBar"></canvas></div></div>
   </section>`;
 }
 
 /* ── VIEW VISÃO GERAL ──────────────────────────────────────── */
 function viewOverview(){
-  const liIdx=SGI.serie.reduce((bi,v,i)=>v!=null?i:bi,-1);
-  const lastSGI=liIdx>=0?SGI.serie[liIdx]:null;
-  const lastMes=liIdx>=0?MESES[liIdx]:'—';
+  const fSGIserie=fSerie(SGI.serie);
+  const fMes=fMeses();
+  const liIdx=fSGIserie.reduce((bi,v,i)=>v!=null?i:bi,-1);
+  const lastSGI=liIdx>=0?fSGIserie[liIdx]:null;
+  const lastMes=liIdx>=0?fMes[liIdx]:'—';
   const pctMeta=lastSGI!=null?Math.min(100,Math.round(lastSGI/META_GLOBAL*100)):0;
-  const igf=IND.find(i=>i.id==='igf'),tempo=IND.find(i=>i.id==='tempo_produtivo'),giroMp=IND.find(i=>i.id==='giro_estoque_mp');
+  const igfRaw=IND.find(i=>i.id==='igf'),tempoRaw=IND.find(i=>i.id==='tempo_produtivo'),giroMpRaw=IND.find(i=>i.id==='giro_estoque_mp');
+  const igf=igfRaw?fInd(igfRaw):null,tempo=tempoRaw?fInd(tempoRaw):null,giroMp=giroMpRaw?fInd(giroMpRaw):null;
   const igfV=igf?lastVal(igf.serie):null,tempoV=tempo?lastVal(tempo.serie):null;
   const igfPct=igfV!=null&&igf?Math.min(100,Math.round(igfV/igf.meta*100)):0;
   const tempoPct=tempoV!=null&&tempo?Math.min(100,Math.round(tempoV/tempo.meta*100)):0;
   const kpiSGI=`<div class="kpi" style="background:linear-gradient(135deg,#7b6cf6,#a78bfa)"><div class="lbl">Resultado SGI — ${lastMes}</div><div class="val">${lastSGI!=null?br(lastSGI*100,1)+'<small>%</small>':'—'}</div><div class="bar"><i style="width:${pctMeta}%"></i></div><div class="foot"><span>Meta ${br(META_GLOBAL*100,0)}%</span><span class="badge">${pctMeta}% da meta</span></div></div>`;
   const ranks=IND.map(i=>{
-    const st=statusOf(i),v=lastVal(i.serie),cls=st==='ok'?'ok':st==='bad'?'bad':'nm';
+    const fi=fInd(i),st=statusOf(fi),v=lastVal(fi.serie),cls=st==='ok'?'ok':st==='bad'?'bad':'nm';
     const grad=st==='ok'?'linear-gradient(90deg,#22b07d,#43e97b)':st==='bad'?'linear-gradient(90deg,#e8556b,#ff7a8a)':'#d7dde6';
-    return`<div class="rank-item"><div class="name">${i.nome}<span>${i.tipo==='limite'?'Limite ':'Meta '}${fmtMeta(i)}</span></div><div class="rank-bar"><i style="width:${v==null?4:barPct(i)}%;background:${grad}"></i></div><div class="num ${cls}">${fmtVal(i,v)}</div></div>`;
+    return`<div class="rank-item"><div class="name">${fi.nome}<span>${fi.tipo==='limite'?'Limite ':'Meta '}${fmtMeta(fi)}</span></div><div class="rank-bar"><i style="width:${v==null?4:barPct(fi)}%;background:${grad}"></i></div><div class="num ${cls}">${fmtVal(fi,v)}</div></div>`;
   }).join('');
   return`${head('visao-geral')}
   <section class="kpis">${kpiSGI}${igf?kpiCard(igf,1):''}${tempo?kpiCard(tempo,2):''}${giroMp?kpiCard(giroMp,3):''}</section>
@@ -365,18 +390,21 @@ function viewOverview(){
 
 /* ── BUILD CHARTS ──────────────────────────────────────────── */
 function buildCharts(cat){
+  const labels=fMeses();
   if(cat==='visao-geral'){
     const igf=IND.find(i=>i.id==='igf'),tempo=IND.find(i=>i.id==='tempo_produtivo');
-    const liIdx=SGI.serie.reduce((bi,v,i)=>v!=null?i:bi,-1);
-    const lastSGI=liIdx>=0?SGI.serie[liIdx]:null;
-    const igfV=igf?lastVal(igf.serie):null,tempoV=tempo?lastVal(tempo.serie):null;
+    const fSGIserie=fSerie(SGI.serie);
+    const liIdx=fSGIserie.reduce((bi,v,i)=>v!=null?i:bi,-1);
+    const lastSGI=liIdx>=0?fSGIserie[liIdx]:null;
+    const igfF=igf?fInd(igf):null,tempoF=tempo?fInd(tempo):null;
+    const igfV=igfF?lastVal(igfF.serie):null,tempoV=tempoF?lastVal(tempoF.serie):null;
     const ctx=document.getElementById('ovLine')?.getContext('2d');
     if(ctx){
       const g=ctx.createLinearGradient(0,0,0,240);g.addColorStop(0,'rgba(123,108,246,.18)');g.addColorStop(1,'rgba(123,108,246,0)');
-      charts.push(new Chart(ctx,{type:'line',data:{labels:MESES,datasets:[
-        {label:'SGI',data:SGI.serie,borderColor:'#7b6cf6',backgroundColor:g,fill:true,tension:.45,borderWidth:3,pointBackgroundColor:'#7b6cf6',pointRadius:4,spanGaps:true},
-        {label:'IGF',data:igf?igf.serie:[],borderColor:'#3aa0ff',tension:.45,borderWidth:3,pointBackgroundColor:'#3aa0ff',pointRadius:4,spanGaps:true},
-        {label:'Tempo',data:tempo?tempo.serie:[],borderColor:'#ff7a8a',tension:.45,borderWidth:3,pointBackgroundColor:'#ff7a8a',pointRadius:4,spanGaps:true}
+      charts.push(new Chart(ctx,{type:'line',data:{labels,datasets:[
+        {label:'SGI',data:fSGIserie,borderColor:'#7b6cf6',backgroundColor:g,fill:true,tension:.45,borderWidth:3,pointBackgroundColor:'#7b6cf6',pointRadius:4,spanGaps:true},
+        {label:'IGF',data:igfF?igfF.serie:[],borderColor:'#3aa0ff',tension:.45,borderWidth:3,pointBackgroundColor:'#3aa0ff',pointRadius:4,spanGaps:true},
+        {label:'Tempo',data:tempoF?tempoF.serie:[],borderColor:'#ff7a8a',tension:.45,borderWidth:3,pointBackgroundColor:'#ff7a8a',pointRadius:4,spanGaps:true}
       ]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{suggestedMin:.3,suggestedMax:1.05,grid:{color:'#f0f2f6'},ticks:{callback:v=>(v*100).toFixed(0)+'%'}},x:{grid:{display:false}}}}}));
     }
     const p1=lastSGI!=null?Math.min(100,Math.round(lastSGI/META_GLOBAL*100)):0;
@@ -385,38 +413,16 @@ function buildCharts(cat){
     donut('dv1',p1,'#7b6cf6');donut('dv2',p2,'#3aa0ff');donut('dv3',p3,'#22b07d');
   }
   else if(cat==='resultado'){
+    const fSGIserie=fSerie(SGI.serie);
+    const fSGIpct=fSerie(SGI.mensalPct);
     const ctx=document.getElementById('sgiLine')?.getContext('2d');
     if(ctx){
       const g=ctx.createLinearGradient(0,0,0,240);g.addColorStop(0,'rgba(123,108,246,.20)');g.addColorStop(1,'rgba(123,108,246,0)');
-      charts.push(new Chart(ctx,{type:'line',data:{labels:MESES,datasets:[
-        {label:'SGI',data:SGI.serie,borderColor:'#7b6cf6',backgroundColor:g,fill:true,tension:.45,borderWidth:3,pointBackgroundColor:'#7b6cf6',pointRadius:4,spanGaps:true},
-        {label:'Meta',data:MESES.map(()=>META_GLOBAL),borderColor:'#c9cfdb',borderDash:[6,5],borderWidth:2,pointRadius:0,fill:false}
+      charts.push(new Chart(ctx,{type:'line',data:{labels,datasets:[
+        {label:'SGI',data:fSGIserie,borderColor:'#7b6cf6',backgroundColor:g,fill:true,tension:.45,borderWidth:3,pointBackgroundColor:'#7b6cf6',pointRadius:4,spanGaps:true},
+        {label:'Meta',data:labels.map(()=>META_GLOBAL),borderColor:'#c9cfdb',borderDash:[6,5],borderWidth:2,pointRadius:0,fill:false}
       ]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{suggestedMin:.3,suggestedMax:1,grid:{color:'#f0f2f6'},ticks:{callback:v=>(v*100).toFixed(0)+'%'}},x:{grid:{display:false}}}}}));
     }
     const bc=['#a78bfa','#ff7a8a','#ffaf45','#7b6cf6','#3aa0ff','#22b07d','#f857a6','#4e7cff','#11998e','#ff5c72','#38ef7d','#ffaf45'];
     const barEl=document.getElementById('sgiBar');
-    if(barEl)charts.push(new Chart(barEl,{type:'bar',data:{labels:MESES,datasets:[{data:SGI.mensalPct,backgroundColor:MESES.map((_,i)=>bc[i%bc.length]),borderRadius:8,barPercentage:.6}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,suggestedMax:100,grid:{color:'#f0f2f6'},ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}}}}));
-  }
-  else{
-    const inds=IND.filter(i=>i.cat===cat);
-    const plot=inds.filter(i=>i.serie.filter(x=>x!=null).length>=2);
-    if(plot.length)lineFor('catChart',plot);
-  }
-}
-
-/* ── DRAWER / NAV ──────────────────────────────────────────── */
-function openDrawer(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('open');}
-function closeDrawer(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('open');}
-function navigate(cat){
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.cat===cat));
-  document.querySelectorAll('.bn-item').forEach(n=>n.classList.toggle('active',n.dataset.cat===cat));
-  closeDrawer();clearCharts();
-  const c=document.getElementById('content');
-  c.innerHTML=cat==='visao-geral'?viewOverview():cat==='resultado'?viewResultado():viewCategory(cat);
-  buildCharts(cat);window.scrollTo(0,0);
-}
-
-init();
-</script>
-</body>
-</html>
+    if(barEl)charts.push(new Chart(barEl,{type:'bar',data:{labels,datasets:[{data:
