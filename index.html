@@ -423,6 +423,35 @@ function buildCharts(cat){
         {label:'Meta',data:labels.map(()=>META_GLOBAL),borderColor:'#c9cfdb',borderDash:[6,5],borderWidth:2,pointRadius:0,fill:false}
       ]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{suggestedMin:.3,suggestedMax:1,grid:{color:'#f0f2f6'},ticks:{callback:v=>(v*100).toFixed(0)+'%'}},x:{grid:{display:false}}}}}));
     }
-    const bc=['#a78bfa','#ff7a8a','#ffaf45','#7b6cf6','#3aa0ff','#22b07d','#f857a6','#4e7cff','#11998e','#ff5c72','#38ef7d','#ffaf45'];
-    const barEl=document.getElementById('sgiBar');
-    if(barEl)charts.push(new Chart(barEl,{type:'bar',data:{labels,datasets:[{data:
+    if(barEl)charts.push(new Chart(barEl,{type:'bar',data:{labels,datasets:[{data:fSGIpct,backgroundColor:labels.map((_,i)=>['#a78bfa','#ff7a8a','#ffaf45','#7b6cf6','#3aa0ff','#22b07d','#f857a6','#4e7cff','#11998e','#ff5c72','#38ef7d','#ffaf45'][i%12]),borderRadius:8,barPercentage:.6}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,suggestedMax:100,grid:{color:'#f0f2f6'},ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}}}}));
+  }
+  else{
+    const inds=IND.filter(i=>i.cat===cat).map(fInd);
+    const plot=inds.filter(i=>i.serie.filter(x=>x!=null).length>=1);
+    if(plot.length){
+      const ctx=document.getElementById('catChart')?.getContext('2d');
+      if(ctx){
+        const ds=plot.map((ind,k)=>({label:ind.nome,data:ind.serie,borderColor:SOLID[k%SOLID.length],backgroundColor:'transparent',tension:.4,borderWidth:2.6,pointRadius:3,pointBackgroundColor:SOLID[k%SOLID.length],spanGaps:true}));
+        charts.push(new Chart(ctx,{type:'line',data:{labels,datasets:ds},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#f0f2f6'},ticks:{callback:v=>br(v,2)}},x:{grid:{display:false}}}}}));
+      }
+    }
+  }
+}
+
+/* ── DRAWER / NAV ──────────────────────────────────────────── */
+function openDrawer(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('open');}
+function closeDrawer(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('open');}
+function navigate(cat){
+  currentCat=cat;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.cat===cat));
+  document.querySelectorAll('.bn-item').forEach(n=>n.classList.toggle('active',n.dataset.cat===cat));
+  closeDrawer();clearCharts();
+  const c=document.getElementById('content');
+  c.innerHTML=cat==='visao-geral'?viewOverview():cat==='resultado'?viewResultado():viewCategory(cat);
+  buildCharts(cat);window.scrollTo(0,0);
+}
+
+init();
+</script>
+</body>
+</html>
