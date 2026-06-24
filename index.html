@@ -3,427 +3,420 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KPIs SGI 2026 — Label Code</title>
+<title>Painel SGI — Label Code</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
+:root{--bg:#eef1f6;--card:#fff;--ink:#2c3a4b;--ink-soft:#8a97a8;--line:#eef1f5;--brand:#5b6cff;--shadow:0 6px 22px rgba(40,55,90,.06);--shadow-kpi:0 12px 26px rgba(40,55,90,.16);--radius:14px;--mob-bar:60px}
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#F1F5F9;--card:#fff;--border:#E2E8F0;
-  --t1:#1E293B;--t2:#64748B;--t3:#94A3B8;
-  --green:#16A34A;--green-bg:#F0FDF4;--green-b:#BBF7D0;
-  --red:#DC2626;--red-bg:#FEF2F2;--red-b:#FECACA;
-  --amber:#D97706;--amber-bg:#FFFBEB;--amber-b:#FDE68A;
-  --blue:#2563EB;--blue-bg:#EFF6FF;--blue-b:#BFDBFE;
-  --r:12px;--rs:8px
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+.app{display:flex;min-height:100vh}
+.sidebar{width:216px;background:#fff;flex-shrink:0;padding:22px 0 30px;display:flex;flex-direction:column;gap:2px;border-right:1px solid var(--line);position:sticky;top:0;height:100vh;overflow-y:auto;z-index:20}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 22px 18px}
+.brand .logo{width:34px;height:34px;border-radius:9px;flex-shrink:0;background:linear-gradient(135deg,#5b6cff,#8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px}
+.brand b{font-size:15px}.brand span{display:block;font-size:10px;color:var(--ink-soft);font-weight:500}
+.nav-group{font-size:10px;color:#b7c0cf;font-weight:700;letter-spacing:.8px;padding:14px 22px 5px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 22px;font-size:13.5px;color:var(--ink-soft);font-weight:500;cursor:pointer;border-left:3px solid transparent;transition:.15s;user-select:none}
+.nav-item svg{width:17px;height:17px;flex-shrink:0}
+.nav-item:hover{color:var(--ink);background:#f7f8fb}
+.nav-item.active{color:var(--brand);background:#f1f2ff;border-left-color:var(--brand);font-weight:600}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:62px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 26px;position:sticky;top:0;z-index:10}
+.burger{display:none;flex-direction:column;justify-content:center;gap:5px;width:36px;height:36px;cursor:pointer;padding:4px;flex-shrink:0;background:none;border:0}
+.burger span{display:block;height:2px;border-radius:2px;background:var(--ink);transition:.25s}
+.search{flex:1;max-width:420px;height:38px;border-radius:20px;background:#f3f5f8;display:flex;align-items:center;gap:9px;padding:0 16px;color:var(--ink-soft);font-size:13px}
+.search svg{width:15px;height:15px;flex-shrink:0}
+.topbar .spacer{flex:1}
+.top-pill{font-size:12px;color:var(--ink-soft);background:#f3f5f8;padding:7px 13px;border-radius:8px;white-space:nowrap}
+.user{display:flex;align-items:center;gap:10px}
+.user .av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#ffa14a,#ff6a88);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.user .meta b{font-size:13px;display:block;line-height:1.2}.user .meta span{font-size:11px;color:var(--ink-soft)}
+.content{padding:24px 26px 44px;flex:1}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.page-head h1{font-size:21px;font-weight:700}.page-head p{font-size:12.5px;color:var(--ink-soft);margin-top:3px}
+.seg{display:flex;background:#fff;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{border:0;background:transparent;padding:8px 15px;font-size:12.5px;color:var(--ink-soft);cursor:pointer;font-family:inherit}
+.seg button.on{background:var(--brand);color:#fff;font-weight:600}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:16px;margin-bottom:18px}
+.kpi{border-radius:var(--radius);padding:18px;color:#fff;box-shadow:var(--shadow-kpi);min-height:130px;display:flex;flex-direction:column}
+.kpi .lbl{font-size:12.5px;font-weight:600;opacity:.95;line-height:1.3;min-height:32px}
+.kpi .val{font-size:28px;font-weight:800;margin:8px 0 2px;letter-spacing:-.5px}
+.kpi .val small{font-size:13px;font-weight:600;opacity:.85}
+.kpi .bar{height:6px;border-radius:6px;background:rgba(255,255,255,.28);margin-top:auto;overflow:hidden}
+.kpi .bar i{display:block;height:100%;border-radius:6px;background:#fff}
+.kpi .foot{display:flex;justify-content:space-between;align-items:center;font-size:11px;opacity:.95;margin-top:9px;gap:6px}
+.badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(255,255,255,.22);white-space:nowrap}
+.row{display:grid;gap:18px;margin-bottom:18px}
+.row.r1{grid-template-columns:1fr 320px}.row.r2{grid-template-columns:1fr 1.15fr}
+.panel{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px}
+.panel-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;gap:10px;flex-wrap:wrap}
+.panel-head h3{font-size:15px;font-weight:700}.panel-head .sub{font-size:11.5px;color:var(--ink-soft);margin-top:2px}
+.legend{display:flex;gap:13px;font-size:11px;color:var(--ink-soft);align-items:center;flex-wrap:wrap}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:middle}
+.chart-wrap{position:relative;height:270px;margin-top:10px}
+.empty{height:200px;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:13px;background:#fafbfd;border-radius:10px;margin-top:10px}
+.donuts{display:flex;flex-direction:column;gap:6px}
+.donut-row{display:flex;align-items:center;gap:16px;padding:9px 2px}
+.donut-row+.donut-row{border-top:1px solid var(--line)}
+.donut-box{position:relative;width:74px;height:74px;flex-shrink:0}
+.donut-box .center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800}
+.donut-info b{font-size:13.5px;font-weight:700;display:block}
+.donut-info span{font-size:11px;color:var(--ink-soft)}
+.donut-info .big{font-size:17px;font-weight:800;color:var(--ink);margin-top:2px}
+.rank-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 26px;margin-top:10px}
+.rank-item{display:grid;grid-template-columns:1fr 90px 64px;align-items:center;gap:10px}
+.rank-item .name{font-size:12.5px;color:var(--ink);line-height:1.25}
+.rank-item .name span{display:block;font-size:10px;color:var(--ink-soft)}
+.rank-bar{height:8px;border-radius:6px;background:#eff2f7;overflow:hidden}
+.rank-bar i{display:block;height:100%;border-radius:6px}
+.rank-item .num{font-size:12.5px;font-weight:700;text-align:right}
+.ok{color:#22b07d}.warn{color:#e9943b}.bad{color:#e8556b}.nm{color:#a7b1c0}
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(20,28,44,.38);z-index:30;opacity:0;transition:opacity .25s;pointer-events:none}
+.mob-overlay.open{display:block;opacity:1;pointer-events:auto}
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--mob-bar);background:#fff;border-top:1px solid var(--line);z-index:25;justify-content:space-around;align-items:stretch}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:9px;color:var(--ink-soft);cursor:pointer;border:0;background:transparent;font-family:inherit;font-weight:500;padding:4px 2px}
+.bn-item svg{width:20px;height:20px;stroke:var(--ink-soft)}
+.bn-item.active{color:var(--brand)}.bn-item.active svg{stroke:var(--brand)}
+@media(max-width:1080px){.row.r1,.row.r2{grid-template-columns:1fr}.rank-grid{grid-template-columns:1fr}}
+@media(max-width:680px){
+  .sidebar{position:fixed;left:0;top:0;height:100%;width:230px;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);box-shadow:4px 0 24px rgba(20,28,44,.15)}
+  .sidebar.open{transform:translateX(0)}.burger{display:flex}.search{max-width:none;font-size:12px}
+  .top-pill{display:none}.user .meta{display:none}.topbar{padding:0 14px;gap:10px}
+  .bottom-nav{display:flex}.content{padding:14px 12px calc(var(--mob-bar) + 16px)}
+  .page-head{flex-direction:column;align-items:flex-start;gap:8px;margin-bottom:14px}
+  .page-head h1{font-size:17px}.page-head p{font-size:11.5px}.seg button{padding:7px 11px;font-size:11.5px}
+  .kpis{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+  .kpi{min-height:108px;padding:12px}.kpi .val{font-size:22px}.kpi .lbl{font-size:11px;min-height:26px}
+  .kpi .foot{font-size:10px}.badge{font-size:9px;padding:2px 6px}
+  .panel{padding:12px 12px}.panel-head h3{font-size:14px}.row{gap:10px;margin-bottom:10px}
+  .chart-wrap{height:200px}.rank-grid{grid-template-columns:1fr;gap:8px}
+  .rank-item{grid-template-columns:1fr 56px 50px;gap:8px}
+  .rank-item .name{font-size:11.5px}.rank-item .name span{font-size:9.5px}.rank-item .num{font-size:11.5px}.rank-bar{height:7px}
+  .donut-box{width:60px;height:60px}.donut-box .center{font-size:12px}
+  .donut-info b{font-size:12px}.donut-info .big{font-size:14px}.donut-info span{font-size:10.5px}
+  .legend{gap:8px;font-size:10.5px}
 }
-body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--t1);font-size:14px;line-height:1.5}
-
-/* ── Header */
-.hdr{background:var(--card);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.hdr-brand{display:flex;align-items:center;gap:12px}
-.hdr-logo{width:36px;height:36px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;letter-spacing:.5px}
-.hdr-title{font-size:15px;font-weight:600;color:var(--t1)}
-.hdr-sub{font-size:12px;color:var(--t2)}
-.hdr-right{text-align:right;font-size:12px;color:var(--t2);line-height:1.6}
-
-/* ── Main layout */
-.main{max-width:1400px;margin:0 auto;padding:28px 24px 64px}
-
-/* ── Cards */
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r)}
-.p20{padding:20px}
-.section-label{font-size:11px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
-
-/* ── Monthly results grid */
-.months-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:10px}
-.trend-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:24px}
-.m-card{padding:18px 12px;text-align:center}
-.m-label{font-size:10px;color:var(--t2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
-.m-value{font-size:26px;font-weight:700;line-height:1;margin-bottom:4px}
-.m-meta{font-size:11px;color:var(--t3)}
-.m-empty{opacity:.45}
-
-/* ── Charts */
-.charts-row{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin-bottom:24px}
-.chart-title{font-size:13px;font-weight:600;margin-bottom:2px}
-.chart-sub{font-size:11px;color:var(--t2);margin-bottom:16px}
-.chart-wrap{position:relative;width:100%}
-
-/* ── Alerts */
-.alerts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:24px}
-.alert{display:flex;align-items:flex-start;gap:12px;padding:16px;border-radius:var(--r);border:1px solid}
-.alert-red{background:var(--red-bg);border-color:var(--red-b)}
-.alert-amber{background:var(--amber-bg);border-color:var(--amber-b)}
-.alert-green{background:var(--green-bg);border-color:var(--green-b)}
-.alert-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
-.alert-ico-red{background:#FEE2E2;color:var(--red)}
-.alert-ico-amber{background:#FEF3C7;color:var(--amber)}
-.alert-title{font-size:13px;font-weight:600;margin-bottom:2px}
-.alert-body{font-size:12px}
-
-/* ── Table */
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:12.5px}
-th{padding:10px 14px;text-align:left;font-size:10px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);background:#F8FAFC;white-space:nowrap}
-th.c{text-align:center}
-td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
-tr:last-child td{border-bottom:none}
-tbody tr:hover td{background:#F8FAFC}
-.sec-row td{background:#F1F5F9!important;color:var(--t2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:8px 14px}
-.td-c{text-align:center}
-.val{font-size:10px;color:var(--t3);margin-top:1px}
-
-/* ── Status dot */
-.dot{width:11px;height:11px;border-radius:3px;display:inline-block}
-.dot-hit{background:var(--green)}
-.dot-miss{background:var(--red)}
-.dot-pending{background:#E2E8F0;border:1px solid #CBD5E1}
-
-/* ── Legend */
-.legend{display:flex;gap:14px;align-items:center;font-size:11px;color:var(--t2)}
-.li{display:flex;align-items:center;gap:5px}
-
-/* ── Pill */
-.pill{font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px}
-.pill-red{background:#FEE2E2;color:#991B1B}
-.pill-amber{background:#FEF3C7;color:#92400E}
-.pill-green{background:#DCFCE7;color:#166534}
-
-/* ── Progress bar */
-.prog-wrap{height:6px;background:#E2E8F0;border-radius:3px;overflow:hidden;margin-top:6px}
-.prog-bar{height:100%;border-radius:3px;transition:width .3s}
-
-/* ── Footer */
-.footer{text-align:center;color:var(--t3);font-size:11px;margin-top:40px;padding-bottom:24px}
-.footer a{color:var(--blue);text-decoration:none}
-
-/* ── Loading */
-#loading{text-align:center;padding:80px;color:var(--t2);font-size:14px}
-
-/* ── Responsive */
-@media(max-width:1100px){.months-grid,.trend-grid{grid-template-columns:repeat(3,1fr)}.charts-row{grid-template-columns:1fr 1fr}}
-@media(max-width:750px){.months-grid,.trend-grid{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.main{padding:16px 12px 40px}.hdr{padding:0 16px}}
+@media(max-width:400px){.kpis{grid-template-columns:1fr}.kpi{min-height:100px}}
 </style>
 </head>
 <body>
-
-<header class="hdr">
-  <div class="hdr-brand">
-    <div class="hdr-logo">LC</div>
-    <div>
-      <div class="hdr-title">Label Code</div>
-      <div class="hdr-sub">Sistema de Gestão Integrada · 2026</div>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="logo">LC</div><div><b>Label Code</b><span>Sistema de Gestão Integrado</span></div></div>
+    <div class="nav-item" data-cat="visao-geral" onclick="navigate('visao-geral')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Visão Geral
     </div>
+    <div class="nav-group">Indicadores</div>
+    <div class="nav-item" data-cat="clientes" onclick="navigate('clientes')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Clientes &amp; Comercial
+    </div>
+    <div class="nav-item" data-cat="estoque" onclick="navigate('estoque')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>Estoque
+    </div>
+    <div class="nav-item" data-cat="producao" onclick="navigate('producao')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20h20"/><path d="M5 20V8l5 4V8l5 4V8l4 3v9"/></svg>Produção
+    </div>
+    <div class="nav-item" data-cat="fornecedores" onclick="navigate('fornecedores')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>Fornecedores
+    </div>
+    <div class="nav-item" data-cat="pessoas" onclick="navigate('pessoas')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Pessoas (RH)
+    </div>
+    <div class="nav-item" data-cat="ambiente" onclick="navigate('ambiente')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a9 9 0 0 0-9 9c0 5 4 7 9 11 5-4 9-6 9-11a9 9 0 0 0-9-9z"/></svg>Meio Ambiente
+    </div>
+    <div class="nav-group">Consolidado</div>
+    <div class="nav-item" data-cat="resultado" onclick="navigate('resultado')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>Resultado SGI
+    </div>
+  </aside>
+  <div class="mob-overlay" id="overlay" onclick="closeDrawer()"></div>
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="bn-item active" data-cat="visao-geral" onclick="navigate('visao-geral')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Geral
+    </button>
+    <button class="bn-item" data-cat="clientes" onclick="navigate('clientes')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Clientes
+    </button>
+    <button class="bn-item" data-cat="producao" onclick="navigate('producao')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20h20"/><path d="M5 20V8l5 4V8l5 4V8l4 3v9"/></svg>Produção
+    </button>
+    <button class="bn-item" data-cat="ambiente" onclick="navigate('ambiente')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a9 9 0 0 0-9 9c0 5 4 7 9 11 5-4 9-6 9-11a9 9 0 0 0-9-9z"/></svg>Ambiente
+    </button>
+    <button class="bn-item" data-cat="resultado" onclick="navigate('resultado')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>SGI
+    </button>
+  </nav>
+  <div class="main">
+    <header class="topbar">
+      <button class="burger" onclick="openDrawer()" aria-label="Menu"><span></span><span></span><span></span></button>
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
+        Buscar indicador…
+      </div>
+      <div class="spacer"></div>
+      <div class="top-pill" id="topPill">Carregando…</div>
+      <div class="user">
+        <div class="av">RO</div>
+        <div class="meta"><b>Ricardo Oliveira</b><span>Qualidade Sênior</span></div>
+      </div>
+    </header>
+    <main class="content" id="content"></main>
   </div>
-  <div class="hdr-right" id="hdrMeta">—</div>
-</header>
+</div>
 
-<main class="main">
-  <div id="loading">⏳ Carregando dados do painel...</div>
-  <div id="app" style="display:none"></div>
-</main>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const MONTHS=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
-const MLABELS=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+/* ── FALLBACK EMBUTIDO ─────────────────────────────────────── */
+window.__DATA__={"meta":{"title":"KPIs SGI 2026 — Label Code","updated":"2026-06-19","global_target":0.80,"spreadsheet_id":"16w6VYi0RFFYgDKtZdk92NPLg_sqp6kKVoF02doOiCVs"},"monthly_results":{"jan":0.7143,"fev":0.5714,"mar":0.6667,"abr":0.7692,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null},"indicators":[{"id":"satisfacao_clientes","name":"Satisfação dos Clientes","category":"Clientes","type":"meta","target":0.85,"better":"higher","format":"percent","values":{"jan":null,"fev":null,"mar":null,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"taxa_conversao_orcamentos","name":"Conversão de Orçamentos em Pedidos","category":"Clientes","type":"meta","target":0.80,"better":"higher","format":"percent","values":{"jan":null,"fev":null,"mar":null,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"conversao_amostras","name":"Conversão de Amostras em Pedido","category":"Clientes","type":"meta","target":0.60,"better":"higher","format":"percent","values":{"jan":null,"fev":null,"mar":null,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"assertividade_amostras","name":"Assertividade de Amostras","category":"Clientes","type":"meta","target":0.85,"better":"higher","format":"percent","values":{"jan":null,"fev":null,"mar":null,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"giro_estoque_mp","name":"Giro de Estoque — Matéria-Prima","category":"Produção","type":"meta","target":0.90,"better":"higher","format":"percent","values":{"jan":0.760,"fev":1.070,"mar":0.780,"abr":1.090,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"produtos_acabados_parado","name":"Giro de Produtos Acabados (PA)","category":"Produção","type":"meta","target":0.90,"better":"higher","format":"percent","values":{"jan":0.840,"fev":0.830,"mar":0.970,"abr":0.880,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"perdas_flexo","name":"Perdas — Flexo","category":"Produção","type":"limite","target":0.030,"better":"lower","format":"percent","values":{"jan":-0.213,"fev":0.062,"mar":-0.008,"abr":0.024,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"perdas_offset","name":"Perdas — Offset","category":"Produção","type":"limite","target":0.030,"better":"lower","format":"percent","values":{"jan":-0.023,"fev":0.049,"mar":-0.002,"abr":0.001,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"perdas_digital","name":"Perdas — Digital","category":"Produção","type":"limite","target":0.100,"better":"lower","format":"percent","values":{"jan":-0.078,"fev":-0.010,"mar":0.002,"abr":-0.075,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"tempo_produtivo","name":"% Tempo Produtivo","category":"Produção","type":"meta","target":0.500,"better":"higher","format":"percent","values":{"jan":0.510,"fev":0.470,"mar":0.536,"abr":0.509,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"pontualidade_entrega","name":"Pontualidade na Entrega Interna","category":"Produção","type":"meta","target":0.700,"better":"higher","format":"percent","values":{"jan":0.180,"fev":0.206,"mar":0.366,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"igf","name":"IGF — Índice Geral de Fornecedores","category":"Qualidade","type":"meta","target":0.900,"better":"higher","format":"percent","values":{"jan":0.966,"fev":0.991,"mar":0.990,"abr":0.981,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"reclamacao_clientes","name":"Reclamação de Clientes (produtos)","category":"Qualidade","type":"limite","target":0.005,"better":"lower","format":"percent","values":{"jan":0.003,"fev":0.003,"mar":0.017,"abr":0.040,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"nc_internas","name":"NC Internas (produtos)","category":"Qualidade","type":"limite","target":0.200,"better":"lower","format":"percent","values":{"jan":0.000,"fev":0.000,"mar":0.200,"abr":0.000,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"pesquisa_clima","name":"Clima Organizacional","category":"Pessoas","type":"meta","target":7.000,"better":"higher","format":"decimal1","values":{"jan":null,"fev":null,"mar":null,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"avaliacoes_desempenho","name":"Avaliações de Desempenho","category":"Pessoas","type":"meta","target":7.000,"better":"higher","format":"decimal1","values":{"jan":null,"fev":null,"mar":null,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"consumo_energia","name":"Consumo Energético (kWh/m²)","category":"Ambiental","type":"limite","target":0.200,"better":"lower","format":"decimal3","values":{"jan":0.170,"fev":0.147,"mar":0.200,"abr":0.129,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"consumo_agua","name":"Consumo de Água (L/dia/colab.)","category":"Ambiental","type":"limite","target":58.0,"better":"lower","format":"decimal1","values":{"jan":null,"fev":null,"mar":40.1,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"descarte_aparas","name":"Descarte de Aparas de Papel","category":"Ambiental","type":"limite","target":0.290,"better":"lower","format":"percent","values":{"jan":0.110,"fev":0.100,"mar":0.330,"abr":0.120,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"descarte_nao_reciclado","name":"Descarte Não Reciclado","category":"Ambiental","type":"limite","target":0.120,"better":"lower","format":"percent","values":{"jan":0.147,"fev":0.163,"mar":0.181,"abr":0.141,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"emissao_gee","name":"Emissão de GEE (por m²)","category":"Ambiental","type":"limite","target":0.030,"better":"lower","format":"decimal3","values":{"jan":0.016,"fev":0.014,"mar":0.019,"abr":0.012,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}}]};
 
-function getStatus(ind,m){
-  const v=ind.values[m];
-  if(v===null||v===undefined)return'pending';
-  return ind.better==='higher'?v>=ind.target?'hit':'miss':v<=ind.target?'hit':'miss';
+/* ── MAPEAMENTO ────────────────────────────────────────────── */
+const CAT_MAP={satisfacao_clientes:'clientes',taxa_conversao_orcamentos:'clientes',conversao_amostras:'clientes',assertividade_amostras:'clientes',pontualidade_entrega:'clientes',reclamacao_clientes:'clientes',giro_estoque_mp:'estoque',produtos_acabados_parado:'estoque',tempo_produtivo:'producao',perdas_flexo:'producao',perdas_offset:'producao',perdas_digital:'producao',nc_internas:'producao',igf:'fornecedores',pesquisa_clima:'pessoas',avaliacoes_desempenho:'pessoas',consumo_energia:'ambiente',consumo_agua:'ambiente',descarte_aparas:'ambiente',descarte_nao_reciclado:'ambiente',emissao_gee:'ambiente'};
+const FMT_MAP={percent:'pct',decimal1:'num1',decimal3:'num3'};
+const MES_KEYS=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const MES_LABEL=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+/* ── ESTADO GLOBAL ─────────────────────────────────────────── */
+let IND=[],SGI={},MESES=[],META_GLOBAL=0.80;
+
+/* ── INIT ──────────────────────────────────────────────────── */
+async function init(){
+  let raw=window.__DATA__;
+  try{const r=await fetch('data.json?v='+Date.now());if(r.ok)raw=await r.json();}catch(_){}
+  processRaw(raw);
+  Chart.defaults.font.family="'Inter',sans-serif";
+  Chart.defaults.color="#8a97a8";
+  navigate('visao-geral');
 }
 
-function fmtVal(v,format){
-  if(v===null||v===undefined)return null;
-  if(format==='percent')return(v*100).toFixed(1)+'%';
-  if(format==='decimal1')return v.toFixed(1);
-  if(format==='decimal3')return v.toFixed(3);
-  return String(v);
+function processRaw(raw){
+  META_GLOBAL=raw.meta.global_target??0.80;
+  const lastIdx=MES_KEYS.reduce((li,m,i)=>{
+    const has=raw.indicators.some(ind=>ind.values[m]!=null)||raw.monthly_results[m]!=null;
+    return has?i:li;
+  },-1);
+  const range=MES_KEYS.slice(0,Math.max(lastIdx+1,4));
+  MESES=range.map(m=>MES_LABEL[MES_KEYS.indexOf(m)]);
+  IND=raw.indicators.map(ind=>({
+    id:ind.id,cat:CAT_MAP[ind.id]||'visao-geral',nome:ind.name,
+    tipo:ind.type,meta:ind.target,better:ind.better,
+    fmt:FMT_MAP[ind.format]||'num',
+    serie:range.map(m=>ind.values[m]??null)
+  }));
+  const sgiSerie=range.map(m=>raw.monthly_results[m]??null);
+  SGI={meta:META_GLOBAL,serie:sgiSerie,mensalPct:sgiSerie.map(v=>v!=null?+(v*100).toFixed(2):null)};
+  const f=MESES[0],l=MESES[MESES.length-1];
+  document.getElementById('topPill').textContent=(f===l?f:f+' – '+l)+' / 2026';
 }
 
-function fmtTarget(ind){
-  const dir=ind.better==='higher'?'≥':'≤';
-  if(ind.format==='percent')return`${dir} ${(ind.target*100).toFixed(ind.target<0.1?1:0)}%`;
-  if(ind.format==='decimal1')return`${dir} ${ind.target.toFixed(1)}`;
-  if(ind.format==='decimal3')return`${dir} ${ind.target.toFixed(3)}`;
-  return`${dir} ${ind.target}`;
-}
-
-function sgiColor(pct){
-  if(pct===null)return'var(--t3)';
-  if(pct>=.80)return'var(--green)';
-  if(pct>=.65)return'var(--amber)';
-  return'var(--red)';
-}
-
-function calcMonth(indicators,m){
-  let hits=0,total=0;
-  indicators.forEach(ind=>{
-    const v=ind.values[m];
-    if(v!==null&&v!==undefined){total++;if(getStatus(ind,m)==='hit')hits++;}
-  });
-  return total===0?null:{hits,total,pct:hits/total};
-}
-
-function dot(s){
-  const cls=s==='hit'?'dot-hit':s==='miss'?'dot-miss':'dot-pending';
-  const t=s==='hit'?'Atingido':s==='miss'?'Não atingido':'Aguardando dados';
-  return`<span class="dot ${cls}" title="${t}"></span>`;
-}
-
-async function loadData(){
-  try{
-    const r=await fetch('data.json?v='+Date.now());
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    return await r.json();
-  }catch(e){
-    console.warn('Usando dados embutidos:',e.message);
-    return window.__DATA__;
+/* ── HELPERS ───────────────────────────────────────────────── */
+function lastVal(s){for(let i=s.length-1;i>=0;i--)if(s[i]!=null)return s[i];return null;}
+function br(n,c){return n.toFixed(c).replace('.',',');}
+function fmtVal(ind,v){
+  if(v==null)return'—';
+  const av=Math.abs(v);
+  switch(ind.fmt){
+    case'pct':return br(av*100,1)+'%';
+    case'num1':return br(v,1);
+    case'num3':return br(v,3);
+    default:return br(v,2);
   }
 }
-
-function render(data){
-  const monthly={};
-  MONTHS.forEach(m=>monthly[m]=calcMonth(data.indicators,m));
-  const withData=MONTHS.filter(m=>monthly[m]!==null);
-  const lastM=withData[withData.length-1]||null;
-
-  document.getElementById('hdrMeta').innerHTML=
-    `<div>Última atualização: <strong>${data.meta.updated}</strong></div>`+
-    `<div>Meta global SGI: <strong>${(data.meta.global_target*100).toFixed(0)}%</strong> &nbsp;·&nbsp; Jan–Dez/2026</div>`;
-
-  // Monthly cards
-  const cardsHTML=MONTHS.map((m,i)=>{
-    const r=monthly[m];
-    const color=sgiColor(r?r.pct:null);
-    const progW=r?Math.round(r.pct*100):0;
-    const progC=r?r.pct>=.8?'#16A34A':r.pct>=.65?'#D97706':'#DC2626':'#CBD5E1';
-    return`<div class="card m-card${r?'':' m-empty'}">
-      <div class="m-label">${MLABELS[i]}/26</div>
-      ${r
-        ?`<div class="m-value" style="color:${color}">${(r.pct*100).toFixed(1)}%</div>
-           <div class="m-meta">${r.hits} de ${r.total} metas</div>
-           <div class="prog-wrap"><div class="prog-bar" style="width:${progW}%;background:${progC}"></div></div>`
-        :`<div class="m-value" style="color:var(--t3);font-size:18px">—</div>
-           <div class="m-meta">sem dados</div>
-           <div class="prog-wrap"></div>`
-      }
-    </div>`;
-  }).join('');
-
-  // Trend card
-  const prev=withData.length>=2?monthly[withData[withData.length-2]]:null;
-  const curr=lastM?monthly[lastM]:null;
-  let trendIcon='—',trendLabel='—',trendColor='var(--t3)';
-  if(curr&&prev){
-    if(curr.pct>prev.pct){trendIcon='↑';trendLabel='Em alta';trendColor='var(--green)';}
-    else if(curr.pct<prev.pct){trendIcon='↓';trendLabel='Em queda';trendColor='var(--red)';}
-    else{trendIcon='→';trendLabel='Estável';trendColor='var(--amber)';}
+function fmtMeta(ind){
+  const m=ind.meta;
+  switch(ind.fmt){
+    case'pct':return br(m*100,0)+'%';
+    case'num1':return br(m,1);
+    case'num3':return br(m,3);
+    default:return br(m,2);
   }
+}
+function statusOf(ind){
+  const v=lastVal(ind.serie);
+  if(v==null)return'nm';
+  return ind.better==='lower'?v<=ind.meta?'ok':'bad':v>=ind.meta?'ok':'bad';
+}
+function barPct(ind){
+  const v=lastVal(ind.serie);
+  if(v==null)return 0;
+  if(ind.better==='lower'){
+    if(ind.meta<=0)return 50;
+    const ratio=v/ind.meta;
+    return Math.min(100,Math.max(0,(2-ratio)*50));
+  }
+  return Math.min(100,Math.max(0,v/ind.meta*100));
+}
+function badge(st){
+  if(st==='ok')return'<span class="badge">✓ Atingida</span>';
+  if(st==='bad')return'<span class="badge">✗ Não atingida</span>';
+  return'<span class="badge">— Não monitorado</span>';
+}
 
-  // Alerts
-  const misses=lastM?data.indicators.filter(ind=>getStatus(ind,lastM)==='miss'):[];
-  const alertsHTML=misses.length===0
-    ?`<div class="card p20" style="text-align:center;color:var(--t2);grid-column:1/-1">✅ Nenhum indicador fora da meta no último período monitorado.</div>`
-    :misses.map(ind=>{
-      const v=ind.values[lastM];
-      const display=fmtVal(v,ind.format)||'—';
-      const tgt=fmtTarget(ind);
-      return`<div class="alert alert-red">
-        <div class="alert-ico alert-ico-red">⚠</div>
-        <div>
-          <div class="alert-title" style="color:#991B1B">${ind.name}</div>
-          <div class="alert-body" style="color:#B91C1C">${MLABELS[MONTHS.indexOf(lastM)]}: <strong>${display}</strong> · meta ${tgt}</div>
-        </div>
-      </div>`;
-    }).join('');
+/* ── PALETA ────────────────────────────────────────────────── */
+const PAL=[['#7b6cf6','#a78bfa'],['#3aa0ff','#36d1dc'],['#ff7a8a','#ff5c72'],['#ffaf45','#ff8a4c'],['#22b07d','#43e97b'],['#f857a6','#ff5858'],['#4e7cff','#6a8dff'],['#11998e','#38ef7d']];
+const SOLID=PAL.map(p=>p[0]);
 
-  // SGI Chart data
-  const sgiVals=MONTHS.map(m=>monthly[m]!==null?+(monthly[m].pct*100).toFixed(2):null);
+/* ── KPI CARD ──────────────────────────────────────────────── */
+function kpiCard(ind,idx){
+  const v=lastVal(ind.serie),st=statusOf(ind),[c1,c2]=PAL[idx%PAL.length];
+  let valTxt=v==null?'—':ind.fmt==='pct'?br(Math.abs(v)*100,1)+'<small>%</small>':fmtVal(ind,v);
+  return`<div class="kpi" style="background:linear-gradient(135deg,${c1},${c2})">
+    <div class="lbl">${ind.nome}</div>
+    <div class="val">${valTxt}</div>
+    <div class="bar"><i style="width:${barPct(ind)}%"></i></div>
+    <div class="foot"><span>${ind.tipo==='limite'?'Limite ':'Meta '}${fmtMeta(ind)}</span>${badge(st)}</div>
+  </div>`;
+}
 
-  // Find specific indicators
-  const pontInd=data.indicators.find(i=>i.id==='pontualidade_entrega');
-  const reclInd=data.indicators.find(i=>i.id==='reclamacao_clientes');
-  const pontVals=MONTHS.map(m=>pontInd.values[m]!==null&&pontInd.values[m]!==undefined?+(pontInd.values[m]*100).toFixed(1):null);
-  const reclVals=MONTHS.map(m=>reclInd.values[m]!==null&&reclInd.values[m]!==undefined?+(reclInd.values[m]*100).toFixed(2):null);
+/* ── CHARTS ────────────────────────────────────────────────── */
+let charts=[];
+function clearCharts(){charts.forEach(c=>c.destroy());charts=[];}
+function lineFor(id,inds){
+  const ctx=document.getElementById(id)?.getContext('2d');if(!ctx)return;
+  charts.push(new Chart(ctx,{type:'line',data:{labels:MESES,datasets:inds.map((ind,k)=>({label:ind.nome,data:ind.serie,borderColor:SOLID[k%SOLID.length],backgroundColor:'transparent',tension:.4,borderWidth:2.6,pointRadius:3,pointBackgroundColor:SOLID[k%SOLID.length],spanGaps:true}))},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'#f0f2f6'},ticks:{callback:v=>br(v,2)}},x:{grid:{display:false}}}}}));
+}
+function legendFor(inds){return inds.map((i,k)=>`<span><i style="background:${SOLID[k%SOLID.length]}"></i>${i.nome}</span>`).join('');}
+function donut(id,val,color){
+  const el=document.getElementById(id);if(!el)return;
+  charts.push(new Chart(el,{type:'doughnut',data:{datasets:[{data:[Math.max(0,val),Math.max(0,100-val)],backgroundColor:[color,'#eef1f6'],borderWidth:0,cutout:'74%'}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}}}}));
+}
 
-  // Category stats for last month
-  const cats=[...new Set(data.indicators.map(i=>i.category))];
-  const catStats=lastM?cats.map(cat=>{
-    const inds=data.indicators.filter(i=>i.category===cat);
-    const monitored=inds.filter(i=>i.values[lastM]!==null&&i.values[lastM]!==undefined);
-    const hits=monitored.filter(i=>getStatus(i,lastM)==='hit');
-    return{cat,hits:hits.length,total:monitored.length,pct:monitored.length?hits.length/monitored.length:null};
-  }):[];
+/* ── CATS ──────────────────────────────────────────────────── */
+const CATS={'visao-geral':{nome:'Visão Geral do SGI',desc:'Monitoramento de objetivos da qualidade e ambientais — ISO 9001 · ISO 14001 · FSC'},clientes:{nome:'Clientes & Comercial',desc:'Satisfação, conversão, assertividade, pontualidade e reclamações'},estoque:{nome:'Estoque',desc:'Giro de matéria-prima e de produtos acabados'},producao:{nome:'Produção',desc:'Tempo produtivo, perdas por processo (Flexo · Offset · Digital) e não conformidades'},fornecedores:{nome:'Fornecedores',desc:'Índice geral de desempenho de fornecedores (IGF)'},pessoas:{nome:'Pessoas (RH)',desc:'Clima organizacional e avaliações de desempenho'},ambiente:{nome:'Meio Ambiente',desc:'Consumo de energia e água, descarte de resíduos e emissões de GEE'},resultado:{nome:'Resultado SGI',desc:'Atendimento consolidado aos objetivos do sistema de gestão'}};
+function head(cat){const c=CATS[cat];return`<div class="page-head"><div><h1>${c.nome}</h1><p>${c.desc}</p></div><div class="seg"><button>Mês</button><button class="on">Trimestre</button><button>Ano</button></div></div>`;}
+function sub(){return`${MESES[0]} a ${MESES[MESES.length-1]} / 2026`;}
 
-  const catBarsHTML=catStats.map(s=>{
-    const pct=s.pct!==null?Math.round(s.pct*100):null;
-    const color=s.pct===null?'#CBD5E1':s.pct>=.8?'#16A34A':s.pct>=.6?'#D97706':'#DC2626';
-    return`<div style="margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-        <span style="font-size:13px;font-weight:500">${s.cat}</span>
-        <span style="font-size:13px;font-weight:600;color:${color}">${pct!==null?pct+'%':'—'}</span>
-      </div>
-      <div class="prog-wrap" style="height:8px">
-        <div class="prog-bar" style="width:${pct||0}%;background:${color}"></div>
-      </div>
-      <div style="font-size:11px;color:var(--t2);margin-top:3px">${s.total>0?s.hits+'/'+s.total+' indicadores':'sem dados'}</div>
-    </div>`;
+/* ── VIEW CATEGORIA ────────────────────────────────────────── */
+function viewCategory(cat){
+  const inds=IND.filter(i=>i.cat===cat);
+  const plot=inds.filter(i=>i.serie.filter(x=>x!=null).length>=2);
+  const chartBlock=plot.length?`<div class="legend">${legendFor(plot)}</div><div class="chart-wrap"><canvas id="catChart"></canvas></div>`:`<div class="empty">Sem série mensal monitorada no período.</div>`;
+  return`${head(cat)}<section class="kpis">${inds.map((i,k)=>kpiCard(i,k)).join('')}</section>
+  <div class="panel"><div class="panel-head"><div><h3>Evolução no Período</h3><div class="sub">Valores mensais — ${sub()}</div></div></div>${chartBlock}</div>`;
+}
+
+/* ── VIEW RESULTADO ────────────────────────────────────────── */
+function viewResultado(){
+  const liIdx=SGI.serie.reduce((bi,v,i)=>v!=null?i:bi,-1);
+  const lastSGI=liIdx>=0?SGI.serie[liIdx]:null;
+  const lastMes=liIdx>=0?MESES[liIdx]:'—';
+  const vals=SGI.serie.filter(v=>v!=null);
+  const media=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;
+  const bestIdx=SGI.serie.reduce((bi,v,i)=>v!=null&&(bi<0||v>SGI.serie[bi])?i:bi,-1);
+  const bestMes=bestIdx>=0?MESES[bestIdx]:'—';
+  const bestVal=bestIdx>=0?SGI.serie[bestIdx]:null;
+  const monitored=IND.filter(i=>liIdx>=0&&i.serie[liIdx]!=null);
+  const atingidos=monitored.filter(i=>{const v=i.serie[liIdx];return i.better==='lower'?v<=i.meta:v>=i.meta;});
+  const atingPct=monitored.length?Math.round(atingidos.length/monitored.length*100):0;
+  const pctMeta=lastSGI!=null?Math.min(100,Math.round(lastSGI/META_GLOBAL*100)):0;
+  const prev=liIdx>0?SGI.serie.slice(0,liIdx).filter(v=>v!=null):[];
+  const prevVal=prev.length?prev[prev.length-1]:null;
+  const tend=lastSGI==null?'—':prevVal==null?'↔':lastSGI>prevVal?'↑':lastSGI<prevVal?'↓':'→';
+  const f=v=>v!=null?br(v*100,1)+'<small>%</small>':'—';
+  return`${head('resultado')}
+  <section class="kpis">
+    <div class="kpi" style="background:linear-gradient(135deg,#7b6cf6,#a78bfa)"><div class="lbl">Resultado SGI — ${lastMes}</div><div class="val">${f(lastSGI)}</div><div class="bar"><i style="width:${pctMeta}%"></i></div><div class="foot"><span>Meta ${br(META_GLOBAL*100,0)}%</span><span class="badge">${pctMeta}% da meta</span></div></div>
+    <div class="kpi" style="background:linear-gradient(135deg,#3aa0ff,#36d1dc)"><div class="lbl">Média do Período</div><div class="val">${f(media)}</div><div class="bar"><i style="width:${media!=null?Math.min(100,Math.round(media/META_GLOBAL*100)):0}%"></i></div><div class="foot"><span>Meta ${br(META_GLOBAL*100,0)}%</span><span class="badge">${media!=null&&media>=META_GLOBAL?'Acima':'Abaixo'} da meta</span></div></div>
+    <div class="kpi" style="background:linear-gradient(135deg,#22b07d,#43e97b)"><div class="lbl">Indicadores Atingidos</div><div class="val">${atingidos.length}<small>/${monitored.length}</small></div><div class="bar"><i style="width:${atingPct}%"></i></div><div class="foot"><span>Monitorados em ${lastMes}</span><span class="badge">${atingPct}%</span></div></div>
+    <div class="kpi" style="background:linear-gradient(135deg,#ffaf45,#ff8a4c)"><div class="lbl">Melhor Mês</div><div class="val">${bestMes}</div><div class="bar"><i style="width:${bestVal!=null?Math.round(bestVal*100):0}%"></i></div><div class="foot"><span>${f(bestVal)}</span><span class="badge">Tendência ${tend}</span></div></div>
+  </section>
+  <section class="row r2">
+    <div class="panel"><div class="panel-head"><div><h3>Atendimento aos Objetivos</h3><div class="sub">Resultado SGI vs. meta de ${br(META_GLOBAL*100,0)}%</div></div></div><div class="chart-wrap"><canvas id="sgiLine"></canvas></div></div>
+    <div class="panel"><div class="panel-head"><div><h3>Resultado por Mês</h3><div class="sub">% de atendimento — ${sub()}</div></div></div><div class="chart-wrap"><canvas id="sgiBar"></canvas></div></div>
+  </section>`;
+}
+
+/* ── VIEW VISÃO GERAL ──────────────────────────────────────── */
+function viewOverview(){
+  const liIdx=SGI.serie.reduce((bi,v,i)=>v!=null?i:bi,-1);
+  const lastSGI=liIdx>=0?SGI.serie[liIdx]:null;
+  const lastMes=liIdx>=0?MESES[liIdx]:'—';
+  const pctMeta=lastSGI!=null?Math.min(100,Math.round(lastSGI/META_GLOBAL*100)):0;
+  const igf=IND.find(i=>i.id==='igf'),tempo=IND.find(i=>i.id==='tempo_produtivo'),giroMp=IND.find(i=>i.id==='giro_estoque_mp');
+  const igfV=igf?lastVal(igf.serie):null,tempoV=tempo?lastVal(tempo.serie):null;
+  const igfPct=igfV!=null&&igf?Math.min(100,Math.round(igfV/igf.meta*100)):0;
+  const tempoPct=tempoV!=null&&tempo?Math.min(100,Math.round(tempoV/tempo.meta*100)):0;
+  const kpiSGI=`<div class="kpi" style="background:linear-gradient(135deg,#7b6cf6,#a78bfa)"><div class="lbl">Resultado SGI — ${lastMes}</div><div class="val">${lastSGI!=null?br(lastSGI*100,1)+'<small>%</small>':'—'}</div><div class="bar"><i style="width:${pctMeta}%"></i></div><div class="foot"><span>Meta ${br(META_GLOBAL*100,0)}%</span><span class="badge">${pctMeta}% da meta</span></div></div>`;
+  const ranks=IND.map(i=>{
+    const st=statusOf(i),v=lastVal(i.serie),cls=st==='ok'?'ok':st==='bad'?'bad':'nm';
+    const grad=st==='ok'?'linear-gradient(90deg,#22b07d,#43e97b)':st==='bad'?'linear-gradient(90deg,#e8556b,#ff7a8a)':'#d7dde6';
+    return`<div class="rank-item"><div class="name">${i.nome}<span>${i.tipo==='limite'?'Limite ':'Meta '}${fmtMeta(i)}</span></div><div class="rank-bar"><i style="width:${v==null?4:barPct(i)}%;background:${grad}"></i></div><div class="num ${cls}">${fmtVal(i,v)}</div></div>`;
   }).join('');
-
-  const app=document.getElementById('app');
-  app.innerHTML=`
-
-    <!-- Monthly results -->
-    <div class="section-label">Resultado SGI — ${MLABELS[0]} a ${MLABELS[11]} / 2026</div>
-    <div class="months-grid">${cardsHTML}</div>
-
-    <!-- Charts + category -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 200px;gap:12px;margin-bottom:24px">
-
-      <div class="card p20">
-        <div class="chart-title">Resultado SGI geral</div>
-        <div class="chart-sub">% indicadores que atingiram a meta · meta global 80%</div>
-        <div class="chart-wrap" style="height:180px"><canvas id="sgiChart" role="img" aria-label="Evolução SGI mensal 2026"></canvas></div>
-      </div>
-
-      <div class="card p20">
-        <div class="chart-title">Pontualidade na entrega</div>
-        <div class="chart-sub">meta ≥ 70%</div>
-        <div class="chart-wrap" style="height:180px"><canvas id="pontChart" role="img" aria-label="Pontualidade mensal 2026"></canvas></div>
-      </div>
-
-      <div class="card p20">
-        <div class="chart-title">Reclamação de clientes</div>
-        <div class="chart-sub">limite ≤ 0,5%</div>
-        <div class="chart-wrap" style="height:180px"><canvas id="reclChart" role="img" aria-label="Reclamações mensais 2026"></canvas></div>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <div class="card p20" style="text-align:center;flex:0">
-          <div class="m-label">Tendência</div>
-          <div style="font-size:32px;font-weight:700;color:${trendColor}">${trendIcon}</div>
-          <div style="font-size:12px;font-weight:500;color:${trendColor}">${trendLabel}</div>
-          ${curr?`<div style="font-size:11px;color:var(--t2);margin-top:4px">${(curr.pct*100).toFixed(1)}% em ${MLABELS[MONTHS.indexOf(lastM)]}</div>`:''}
-        </div>
-        <div class="card p20" style="flex:1">
-          <div class="section-label" style="margin-bottom:16px">Por categoria<br><span style="font-weight:400">${lastM?MLABELS[MONTHS.indexOf(lastM)]+'/26':'—'}</span></div>
-          ${catBarsHTML||'<div style="color:var(--t2);font-size:12px">sem dados</div>'}
-        </div>
-      </div>
-
+  return`${head('visao-geral')}
+  <section class="kpis">${kpiSGI}${igf?kpiCard(igf,1):''}${tempo?kpiCard(tempo,2):''}${giroMp?kpiCard(giroMp,3):''}</section>
+  <section class="row r1">
+    <div class="panel">
+      <div class="panel-head"><div><h3>Evolução dos Indicadores-Chave</h3><div class="sub">SGI, IGF e Tempo Produtivo — ${sub()}</div></div>
+      <div class="legend"><span><i style="background:#7b6cf6"></i>Resultado SGI</span><span><i style="background:#3aa0ff"></i>IGF</span><span><i style="background:#ff7a8a"></i>Tempo Prod.</span></div></div>
+      <div class="chart-wrap"><canvas id="ovLine"></canvas></div>
     </div>
-
-    <!-- Alerts -->
-    <div class="section-label">Indicadores fora da meta · ${lastM?MLABELS[MONTHS.indexOf(lastM)]+'/26':'último período'}</div>
-    <div class="alerts-grid">${alertsHTML}</div>
-
-    <!-- Full table -->
-    <div class="section-label" style="display:flex;justify-content:space-between;align-items:center">
-      <span>Status detalhado — todos os 21 indicadores</span>
-      <div class="legend">
-        <div class="li"><span class="dot dot-hit"></span>Atingido</div>
-        <div class="li"><span class="dot dot-miss"></span>Não atingido</div>
-        <div class="li"><span class="dot dot-pending"></span>Aguardando</div>
+    <div class="panel">
+      <div class="panel-head"><div><h3>Atingimento de Metas</h3><div class="sub">${lastMes} / 2026</div></div></div>
+      <div class="donuts">
+        <div class="donut-row"><div class="donut-box"><canvas id="dv1"></canvas><div class="center" style="color:#7b6cf6">${pctMeta}%</div></div><div class="donut-info"><b>Resultado SGI</b><span>Meta ${br(META_GLOBAL*100,0)}%</span><div class="big">${lastSGI!=null?br(lastSGI*100,1)+'%':'—'}</div></div></div>
+        <div class="donut-row"><div class="donut-box"><canvas id="dv2"></canvas><div class="center" style="color:#3aa0ff">${igfPct}%</div></div><div class="donut-info"><b>IGF Fornecedores</b><span>Meta ${igf?br(igf.meta*100,0)+'%':'—'}</span><div class="big">${igfV!=null?br(igfV*100,1)+'%':'—'}</div></div></div>
+        <div class="donut-row"><div class="donut-box"><canvas id="dv3"></canvas><div class="center" style="color:#22b07d">${tempoPct}%</div></div><div class="donut-info"><b>Tempo Produtivo</b><span>Meta ${tempo?br(tempo.meta*100,0)+'%':'—'}</span><div class="big">${tempoV!=null?br(tempoV*100,1)+'%':'—'}</div></div></div>
       </div>
     </div>
-    <div class="card" style="overflow:hidden">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th style="min-width:220px">Indicador</th>
-              <th>Tipo</th>
-              <th>Meta</th>
-              ${MLABELS.map(l=>`<th class="c">${l}</th>`).join('')}
-            </tr>
-          </thead>
-          <tbody id="kpiBody"></tbody>
-        </table>
-      </div>
-    </div>
+  </section>
+  <div class="panel"><div class="panel-head"><div><h3>Painel Completo de Indicadores</h3><div class="sub">Todos os ${IND.length} monitoramentos — posição em ${lastMes} / 2026</div></div></div><div class="rank-grid">${ranks}</div></div>`;
+}
 
-    <div class="footer">
-      Label Code · Painel de KPIs SGI 2026 · Atualizado em ${data.meta.updated} ·
-      <a href="https://github.com/dashboard-sgi-labelcode" target="_blank">Ver código no GitHub</a>
-    </div>
-  `;
-
-  // Populate table
-  const tbody=document.getElementById('kpiBody');
-  let lastCat=null;
-  data.indicators.forEach(ind=>{
-    if(ind.category!==lastCat){
-      lastCat=ind.category;
-      const tr=document.createElement('tr');
-      tr.className='sec-row';
-      tr.innerHTML=`<td colspan="${15}">${ind.category}</td>`;
-      tbody.appendChild(tr);
+/* ── BUILD CHARTS ──────────────────────────────────────────── */
+function buildCharts(cat){
+  if(cat==='visao-geral'){
+    const igf=IND.find(i=>i.id==='igf'),tempo=IND.find(i=>i.id==='tempo_produtivo');
+    const liIdx=SGI.serie.reduce((bi,v,i)=>v!=null?i:bi,-1);
+    const lastSGI=liIdx>=0?SGI.serie[liIdx]:null;
+    const igfV=igf?lastVal(igf.serie):null,tempoV=tempo?lastVal(tempo.serie):null;
+    const ctx=document.getElementById('ovLine')?.getContext('2d');
+    if(ctx){
+      const g=ctx.createLinearGradient(0,0,0,240);g.addColorStop(0,'rgba(123,108,246,.18)');g.addColorStop(1,'rgba(123,108,246,0)');
+      charts.push(new Chart(ctx,{type:'line',data:{labels:MESES,datasets:[
+        {label:'SGI',data:SGI.serie,borderColor:'#7b6cf6',backgroundColor:g,fill:true,tension:.45,borderWidth:3,pointBackgroundColor:'#7b6cf6',pointRadius:4,spanGaps:true},
+        {label:'IGF',data:igf?igf.serie:[],borderColor:'#3aa0ff',tension:.45,borderWidth:3,pointBackgroundColor:'#3aa0ff',pointRadius:4,spanGaps:true},
+        {label:'Tempo',data:tempo?tempo.serie:[],borderColor:'#ff7a8a',tension:.45,borderWidth:3,pointBackgroundColor:'#ff7a8a',pointRadius:4,spanGaps:true}
+      ]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{suggestedMin:.3,suggestedMax:1.05,grid:{color:'#f0f2f6'},ticks:{callback:v=>(v*100).toFixed(0)+'%'}},x:{grid:{display:false}}}}}));
     }
-    const tr=document.createElement('tr');
-    const cells=MONTHS.map(m=>{
-      const s=getStatus(ind,m);
-      const v=ind.values[m];
-      const display=v!==null&&v!==undefined?fmtVal(v,ind.format):'';
-      return`<td class="td-c"><div style="display:flex;flex-direction:column;align-items:center;gap:1px">${dot(s)}${display?`<div class="val">${display}</div>`:''}</div></td>`;
-    }).join('');
-    tr.innerHTML=`
-      <td>${ind.name}</td>
-      <td><span class="pill ${ind.type==='meta'?'pill-green':'pill-amber'}">${ind.type==='meta'?'Meta':'Limite'}</span></td>
-      <td style="color:var(--t2);white-space:nowrap;font-size:12px">${fmtTarget(ind)}</td>
-      ${cells}`;
-    tbody.appendChild(tr);
-  });
-
-  // Charts
-  const G='#16A34A',R='#DC2626',A='#D97706',B='#2563EB',GR='#94A3B8';
-  const grid='#E2E8F0',tick='#94A3B8';
-  const base={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-    scales:{x:{ticks:{color:tick,font:{size:10}},grid:{display:false},border:{display:false}},
-            y:{ticks:{color:tick,font:{size:10}},grid:{color:grid},border:{display:false}}}};
-
-  new Chart(document.getElementById('sgiChart'),{
-    type:'line',
-    data:{labels:MLABELS,datasets:[
-      {data:sgiVals,borderColor:B,backgroundColor:'rgba(37,99,235,.07)',borderWidth:2.5,
-       pointRadius:sgiVals.map(v=>v!==null?4:0),pointBackgroundColor:sgiVals.map(v=>v===null?B:v>=80?G:v>=65?A:R),
-       fill:true,tension:.35,spanGaps:false},
-      {data:MONTHS.map(()=>80),borderColor:R,borderDash:[5,4],borderWidth:1.5,pointRadius:0,fill:false}
-    ]},
-    options:{...base,scales:{...base.scales,y:{...base.scales.y,min:0,max:100,ticks:{...base.scales.y.ticks,callback:v=>v+'%'}}}}
-  });
-
-  new Chart(document.getElementById('pontChart'),{
-    type:'bar',
-    data:{labels:MLABELS,datasets:[
-      {data:pontVals,backgroundColor:pontVals.map(v=>v===null?'#E2E8F0':v>=70?G:R),borderRadius:4,barThickness:14},
-      {type:'line',data:MONTHS.map(()=>70),borderColor:A,borderDash:[5,4],borderWidth:1.5,pointRadius:0,fill:false}
-    ]},
-    options:{...base,scales:{...base.scales,y:{...base.scales.y,min:0,max:100,ticks:{...base.scales.y.ticks,callback:v=>v+'%'}}}}
-  });
-
-  new Chart(document.getElementById('reclChart'),{
-    type:'bar',
-    data:{labels:MLABELS,datasets:[
-      {data:reclVals,backgroundColor:reclVals.map(v=>v===null?'#E2E8F0':v<=.5?G:R),borderRadius:4,barThickness:14},
-      {type:'line',data:MONTHS.map(()=>0.5),borderColor:A,borderDash:[5,4],borderWidth:1.5,pointRadius:0,fill:false}
-    ]},
-    options:{...base,scales:{...base.scales,y:{...base.scales.y,min:0,ticks:{...base.scales.y.ticks,callback:v=>v+'%'}}}}
-  });
-
-  document.getElementById('loading').style.display='none';
-  app.style.display='block';
+    const p1=lastSGI!=null?Math.min(100,Math.round(lastSGI/META_GLOBAL*100)):0;
+    const p2=igfV!=null&&igf?Math.min(100,Math.round(igfV/igf.meta*100)):0;
+    const p3=tempoV!=null&&tempo?Math.min(100,Math.round(tempoV/tempo.meta*100)):0;
+    donut('dv1',p1,'#7b6cf6');donut('dv2',p2,'#3aa0ff');donut('dv3',p3,'#22b07d');
+  }
+  else if(cat==='resultado'){
+    const ctx=document.getElementById('sgiLine')?.getContext('2d');
+    if(ctx){
+      const g=ctx.createLinearGradient(0,0,0,240);g.addColorStop(0,'rgba(123,108,246,.20)');g.addColorStop(1,'rgba(123,108,246,0)');
+      charts.push(new Chart(ctx,{type:'line',data:{labels:MESES,datasets:[
+        {label:'SGI',data:SGI.serie,borderColor:'#7b6cf6',backgroundColor:g,fill:true,tension:.45,borderWidth:3,pointBackgroundColor:'#7b6cf6',pointRadius:4,spanGaps:true},
+        {label:'Meta',data:MESES.map(()=>META_GLOBAL),borderColor:'#c9cfdb',borderDash:[6,5],borderWidth:2,pointRadius:0,fill:false}
+      ]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{suggestedMin:.3,suggestedMax:1,grid:{color:'#f0f2f6'},ticks:{callback:v=>(v*100).toFixed(0)+'%'}},x:{grid:{display:false}}}}}));
+    }
+    const bc=['#a78bfa','#ff7a8a','#ffaf45','#7b6cf6','#3aa0ff','#22b07d','#f857a6','#4e7cff','#11998e','#ff5c72','#38ef7d','#ffaf45'];
+    const barEl=document.getElementById('sgiBar');
+    if(barEl)charts.push(new Chart(barEl,{type:'bar',data:{labels:MESES,datasets:[{data:SGI.mensalPct,backgroundColor:MESES.map((_,i)=>bc[i%bc.length]),borderRadius:8,barPercentage:.6}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,suggestedMax:100,grid:{color:'#f0f2f6'},ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}}}}));
+  }
+  else{
+    const inds=IND.filter(i=>i.cat===cat);
+    const plot=inds.filter(i=>i.serie.filter(x=>x!=null).length>=2);
+    if(plot.length)lineFor('catChart',plot);
+  }
 }
 
-// ── Embedded fallback data ──────────────────────────────────────────────────
-window.__DATA__={"meta":{"title":"KPIs SGI 2026 — Label Code","updated":"2026-06-19","global_target":0.80},"monthly_results":{"jan":0.7143,"fev":0.5714,"mar":0.6667,"abr":0.7692,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null},"indicators":[{"id":"satisfacao_clientes","name":"Satisfação dos clientes","category":"Clientes","type":"meta","target":0.85,"better":"higher","format":"percent","values":{"jan":null,"fev":null,"mar":null,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"taxa_conversao_orcamentos","name":"Taxa de conversão de orçamentos em pedidos","category":"Clientes","type":"meta","target":0.80,"better":"higher","format":"percent","values":{"jan":null,"fev":null,"mar":null,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"conversao_amostras","name":"Conversão de amostras em pedido","category":"Clientes","type":"meta","target":0.60,"better":"higher","format":"percent","values":{"jan":null,"fev":null,"mar":null,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"assertividade_amostras","name":"Assertividade de amostras","category":"Clientes","type":"meta","target":0.85,"better":"higher","format":"percent","values":{"jan":null,"fev":null,"mar":null,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"giro_estoque_mp","name":"Giro de estoque (matéria prima)","category":"Produção","type":"meta","target":0.90,"better":"higher","format":"percent","values":{"jan":0.760,"fev":1.070,"mar":0.780,"abr":1.090,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"produtos_acabados_parado","name":"Produtos acabados parado em estoque","category":"Produção","type":"meta","target":0.90,"better":"higher","format":"percent","values":{"jan":0.840,"fev":0.830,"mar":0.970,"abr":0.880,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"perdas_flexo","name":"Perdas – Flexo","category":"Produção","type":"limite","target":0.030,"better":"lower","format":"percent","values":{"jan":-0.213,"fev":0.062,"mar":-0.008,"abr":0.024,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"perdas_offset","name":"Perdas – Offset","category":"Produção","type":"limite","target":0.030,"better":"lower","format":"percent","values":{"jan":-0.023,"fev":0.049,"mar":-0.002,"abr":0.001,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"perdas_digital","name":"Perdas – Digital","category":"Produção","type":"limite","target":0.100,"better":"lower","format":"percent","values":{"jan":-0.078,"fev":-0.010,"mar":0.002,"abr":-0.075,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"tempo_produtivo","name":"% Tempo produtivo","category":"Produção","type":"meta","target":0.500,"better":"higher","format":"percent","values":{"jan":0.510,"fev":0.470,"mar":0.536,"abr":0.509,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"pontualidade_entrega","name":"Pontualidade na entrega interna","category":"Produção","type":"meta","target":0.700,"better":"higher","format":"percent","values":{"jan":0.180,"fev":0.206,"mar":0.366,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"igf","name":"IGF – Índice Geral de Fornecedores","category":"Qualidade","type":"meta","target":0.900,"better":"higher","format":"percent","values":{"jan":0.966,"fev":0.991,"mar":0.990,"abr":0.981,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"reclamacao_clientes","name":"Reclamação de clientes (produtos)","category":"Qualidade","type":"limite","target":0.005,"better":"lower","format":"percent","values":{"jan":0.003,"fev":0.003,"mar":0.017,"abr":0.040,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"nc_internas","name":"Não Conformidades Internas (produtos)","category":"Qualidade","type":"limite","target":0.200,"better":"lower","format":"percent","values":{"jan":0.000,"fev":0.000,"mar":0.200,"abr":0.000,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"pesquisa_clima","name":"Pesquisa de clima organizacional","category":"Pessoas","type":"meta","target":7.000,"better":"higher","format":"decimal1","values":{"jan":null,"fev":null,"mar":null,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"avaliacoes_desempenho","name":"Avaliações de desempenho","category":"Pessoas","type":"meta","target":7.000,"better":"higher","format":"decimal1","values":{"jan":null,"fev":null,"mar":null,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"consumo_energia","name":"Consumo energético (kWh/m²)","category":"Ambiental","type":"limite","target":0.200,"better":"lower","format":"decimal3","values":{"jan":0.170,"fev":0.147,"mar":0.200,"abr":0.129,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"consumo_agua","name":"Consumo de água (L/dia/colaborador)","category":"Ambiental","type":"limite","target":58.0,"better":"lower","format":"decimal1","values":{"jan":null,"fev":null,"mar":40.1,"abr":null,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"descarte_aparas","name":"Descarte aparas de papel / total utilizado","category":"Ambiental","type":"limite","target":0.290,"better":"lower","format":"percent","values":{"jan":0.110,"fev":0.100,"mar":0.330,"abr":0.120,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"descarte_nao_reciclado","name":"Descarte não reciclado / total utilizado","category":"Ambiental","type":"limite","target":0.120,"better":"lower","format":"percent","values":{"jan":0.147,"fev":0.163,"mar":0.181,"abr":0.141,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}},{"id":"emissao_gee","name":"Emissão de GEE por fonte de energia / m²","category":"Ambiental","type":"limite","target":0.030,"better":"lower","format":"decimal3","values":{"jan":0.016,"fev":0.014,"mar":0.019,"abr":0.012,"mai":null,"jun":null,"jul":null,"ago":null,"set":null,"out":null,"nov":null,"dez":null}}]};
-// ──────────────────────────────────────────────────────────────────────────
+/* ── DRAWER / NAV ──────────────────────────────────────────── */
+function openDrawer(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('open');}
+function closeDrawer(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('open');}
+function navigate(cat){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.cat===cat));
+  document.querySelectorAll('.bn-item').forEach(n=>n.classList.toggle('active',n.dataset.cat===cat));
+  closeDrawer();clearCharts();
+  const c=document.getElementById('content');
+  c.innerHTML=cat==='visao-geral'?viewOverview():cat==='resultado'?viewResultado():viewCategory(cat);
+  buildCharts(cat);window.scrollTo(0,0);
+}
 
-loadData().then(render).catch(e=>{
-  document.getElementById('loading').textContent='Erro ao carregar: '+e.message;
-});
+init();
 </script>
 </body>
 </html>
